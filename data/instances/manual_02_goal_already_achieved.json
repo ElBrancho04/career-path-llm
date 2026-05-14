@@ -1,0 +1,38 @@
+{
+  "skills": [
+    "Python",
+    "SQL",
+    "Data Analysis"
+  ],
+  "courses": [
+    {
+      "id": "C1",
+      "name": "Intro to Python",
+      "skills_granted": [
+        "Python"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 1.0
+    },
+    {
+      "id": "C2",
+      "name": "Intro to SQL",
+      "skills_granted": [
+        "SQL"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 1.1
+    }
+  ],
+  "initial_skills": [
+    "Python",
+    "Data Analysis"
+  ],
+  "target_skills": [
+    "Data Analysis"
+  ]
+}

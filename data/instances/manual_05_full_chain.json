@@ -1,0 +1,86 @@
+{
+  "skills": [
+    "Programming Basics",
+    "Python",
+    "Data Structures",
+    "Algorithms",
+    "Machine Learning"
+  ],
+  "courses": [
+    {
+      "id": "C1",
+      "name": "Programming Basics",
+      "skills_granted": [
+        "Programming Basics"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 1.0
+    },
+    {
+      "id": "C2",
+      "name": "Python Programming",
+      "skills_granted": [
+        "Python"
+      ],
+      "skills_required": [
+        "Programming Basics"
+      ],
+      "prerequisites": [
+        "C1"
+      ],
+      "credits": 3,
+      "difficulty": 1.5
+    },
+    {
+      "id": "C3",
+      "name": "Data Structures",
+      "skills_granted": [
+        "Data Structures"
+      ],
+      "skills_required": [
+        "Python"
+      ],
+      "prerequisites": [
+        "C2"
+      ],
+      "credits": 3,
+      "difficulty": 2.0
+    },
+    {
+      "id": "C4",
+      "name": "Algorithms",
+      "skills_granted": [
+        "Algorithms"
+      ],
+      "skills_required": [
+        "Data Structures"
+      ],
+      "prerequisites": [
+        "C3"
+      ],
+      "credits": 4,
+      "difficulty": 2.5
+    },
+    {
+      "id": "C5",
+      "name": "Applied Machine Learning",
+      "skills_granted": [
+        "Machine Learning"
+      ],
+      "skills_required": [
+        "Algorithms"
+      ],
+      "prerequisites": [
+        "C4"
+      ],
+      "credits": 4,
+      "difficulty": 3.0
+    }
+  ],
+  "initial_skills": [],
+  "target_skills": [
+    "Machine Learning"
+  ]
+}

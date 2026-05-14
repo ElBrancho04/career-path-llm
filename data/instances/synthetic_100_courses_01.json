@@ -1,0 +1,1641 @@
+{
+  "skills": [
+    "AI Ethics",
+    "Algorithms",
+    "Big Data",
+    "Cloud Computing",
+    "Communication",
+    "Computer Vision",
+    "Cybersecurity",
+    "Data Analysis",
+    "Data Engineering",
+    "Databases",
+    "Deep Learning",
+    "DevOps",
+    "Distributed Systems",
+    "Machine Learning",
+    "Natural Language Processing",
+    "Project Management",
+    "Python",
+    "SQL",
+    "Skill 100",
+    "Skill 21",
+    "Skill 22",
+    "Skill 23",
+    "Skill 24",
+    "Skill 25",
+    "Skill 26",
+    "Skill 27",
+    "Skill 28",
+    "Skill 29",
+    "Skill 30",
+    "Skill 31",
+    "Skill 32",
+    "Skill 33",
+    "Skill 34",
+    "Skill 35",
+    "Skill 36",
+    "Skill 37",
+    "Skill 38",
+    "Skill 39",
+    "Skill 40",
+    "Skill 41",
+    "Skill 42",
+    "Skill 43",
+    "Skill 44",
+    "Skill 45",
+    "Skill 46",
+    "Skill 47",
+    "Skill 48",
+    "Skill 49",
+    "Skill 50",
+    "Skill 51",
+    "Skill 52",
+    "Skill 53",
+    "Skill 54",
+    "Skill 55",
+    "Skill 56",
+    "Skill 57",
+    "Skill 58",
+    "Skill 59",
+    "Skill 60",
+    "Skill 61",
+    "Skill 62",
+    "Skill 63",
+    "Skill 64",
+    "Skill 65",
+    "Skill 66",
+    "Skill 67",
+    "Skill 68",
+    "Skill 69",
+    "Skill 70",
+    "Skill 71",
+    "Skill 72",
+    "Skill 73",
+    "Skill 74",
+    "Skill 75",
+    "Skill 76",
+    "Skill 77",
+    "Skill 78",
+    "Skill 79",
+    "Skill 80",
+    "Skill 81",
+    "Skill 82",
+    "Skill 83",
+    "Skill 84",
+    "Skill 85",
+    "Skill 86",
+    "Skill 87",
+    "Skill 88",
+    "Skill 89",
+    "Skill 90",
+    "Skill 91",
+    "Skill 92",
+    "Skill 93",
+    "Skill 94",
+    "Skill 95",
+    "Skill 96",
+    "Skill 97",
+    "Skill 98",
+    "Skill 99",
+    "Software Design",
+    "Statistics"
+  ],
+  "courses": [
+    {
+      "id": "C01",
+      "name": "Course 01 (Skill 22, Skill 54)",
+      "skills_granted": [
+        "Skill 22",
+        "Skill 54"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 4,
+      "difficulty": 2.0
+    },
+    {
+      "id": "C02",
+      "name": "Course 02 (Skill 89)",
+      "skills_granted": [
+        "Skill 89"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 5,
+      "difficulty": 2.5
+    },
+    {
+      "id": "C03",
+      "name": "Course 03 (Skill 82, Skill 99)",
+      "skills_granted": [
+        "Skill 82",
+        "Skill 99"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 3,
+      "difficulty": 2.6
+    },
+    {
+      "id": "C04",
+      "name": "Course 04 (Skill 37)",
+      "skills_granted": [
+        "Skill 37"
+      ],
+      "skills_required": [
+        "Skill 22",
+        "Skill 99"
+      ],
+      "prerequisites": [
+        "C01",
+        "C03"
+      ],
+      "credits": 3,
+      "difficulty": 1.6
+    },
+    {
+      "id": "C05",
+      "name": "Course 05 (Skill 62)",
+      "skills_granted": [
+        "Skill 62"
+      ],
+      "skills_required": [
+        "Skill 82"
+      ],
+      "prerequisites": [
+        "C03"
+      ],
+      "credits": 2,
+      "difficulty": 2.7
+    },
+    {
+      "id": "C06",
+      "name": "Course 06 (Skill 28)",
+      "skills_granted": [
+        "Skill 28"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 2.0
+    },
+    {
+      "id": "C07",
+      "name": "Course 07 (Skill 61, Skill 66)",
+      "skills_granted": [
+        "Skill 61",
+        "Skill 66"
+      ],
+      "skills_required": [
+        "Skill 99"
+      ],
+      "prerequisites": [
+        "C03"
+      ],
+      "credits": 5,
+      "difficulty": 3.3
+    },
+    {
+      "id": "C08",
+      "name": "Course 08 (Skill 24)",
+      "skills_granted": [
+        "Skill 24"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C04"
+      ],
+      "credits": 4,
+      "difficulty": 3.6
+    },
+    {
+      "id": "C09",
+      "name": "Course 09 (Skill 65, Skill 68)",
+      "skills_granted": [
+        "Skill 65",
+        "Skill 68"
+      ],
+      "skills_required": [
+        "Skill 99"
+      ],
+      "prerequisites": [
+        "C03"
+      ],
+      "credits": 2,
+      "difficulty": 4.5
+    },
+    {
+      "id": "C10",
+      "name": "Course 10 (Python, Skill 31)",
+      "skills_granted": [
+        "Python",
+        "Skill 31"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 3.4
+    },
+    {
+      "id": "C11",
+      "name": "Course 11 (SQL, Skill 48)",
+      "skills_granted": [
+        "SQL",
+        "Skill 48"
+      ],
+      "skills_required": [
+        "Python",
+        "Skill 82"
+      ],
+      "prerequisites": [
+        "C03",
+        "C10"
+      ],
+      "credits": 4,
+      "difficulty": 3.9
+    },
+    {
+      "id": "C12",
+      "name": "Course 12 (Skill 75)",
+      "skills_granted": [
+        "Skill 75"
+      ],
+      "skills_required": [
+        "Skill 24",
+        "Skill 89"
+      ],
+      "prerequisites": [
+        "C02",
+        "C08"
+      ],
+      "credits": 2,
+      "difficulty": 4.5
+    },
+    {
+      "id": "C13",
+      "name": "Course 13 (Algorithms, Skill 55)",
+      "skills_granted": [
+        "Algorithms",
+        "Skill 55"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C05"
+      ],
+      "credits": 5,
+      "difficulty": 1.2
+    },
+    {
+      "id": "C14",
+      "name": "Course 14 (Big Data)",
+      "skills_granted": [
+        "Big Data"
+      ],
+      "skills_required": [
+        "Skill 62"
+      ],
+      "prerequisites": [
+        "C05"
+      ],
+      "credits": 4,
+      "difficulty": 2.0
+    },
+    {
+      "id": "C15",
+      "name": "Course 15 (Skill 30)",
+      "skills_granted": [
+        "Skill 30"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C05"
+      ],
+      "credits": 5,
+      "difficulty": 4.9
+    },
+    {
+      "id": "C16",
+      "name": "Course 16 (Skill 79)",
+      "skills_granted": [
+        "Skill 79"
+      ],
+      "skills_required": [
+        "Skill 28"
+      ],
+      "prerequisites": [
+        "C06"
+      ],
+      "credits": 5,
+      "difficulty": 2.7
+    },
+    {
+      "id": "C17",
+      "name": "Course 17 (Deep Learning, Skill 56)",
+      "skills_granted": [
+        "Deep Learning",
+        "Skill 56"
+      ],
+      "skills_required": [
+        "Skill 89"
+      ],
+      "prerequisites": [
+        "C02"
+      ],
+      "credits": 3,
+      "difficulty": 1.4
+    },
+    {
+      "id": "C18",
+      "name": "Course 18 (Skill 53)",
+      "skills_granted": [
+        "Skill 53"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C02"
+      ],
+      "credits": 2,
+      "difficulty": 1.3
+    },
+    {
+      "id": "C19",
+      "name": "Course 19 (Machine Learning, Skill 57)",
+      "skills_granted": [
+        "Machine Learning",
+        "Skill 57"
+      ],
+      "skills_required": [
+        "Skill 24",
+        "Skill 75"
+      ],
+      "prerequisites": [
+        "C08",
+        "C11",
+        "C12"
+      ],
+      "credits": 3,
+      "difficulty": 1.1
+    },
+    {
+      "id": "C20",
+      "name": "Course 20 (Skill 43)",
+      "skills_granted": [
+        "Skill 43"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 5,
+      "difficulty": 1.6
+    },
+    {
+      "id": "C21",
+      "name": "Course 21 (Skill 70)",
+      "skills_granted": [
+        "Skill 70"
+      ],
+      "skills_required": [
+        "Skill 28",
+        "Skill 65"
+      ],
+      "prerequisites": [
+        "C06",
+        "C09"
+      ],
+      "credits": 3,
+      "difficulty": 5.0
+    },
+    {
+      "id": "C22",
+      "name": "Course 22 (Cybersecurity, Skill 64)",
+      "skills_granted": [
+        "Cybersecurity",
+        "Skill 64"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 4,
+      "difficulty": 1.5
+    },
+    {
+      "id": "C23",
+      "name": "Course 23 (Skill 84)",
+      "skills_granted": [
+        "Skill 84"
+      ],
+      "skills_required": [
+        "Skill 82"
+      ],
+      "prerequisites": [
+        "C03",
+        "C19"
+      ],
+      "credits": 5,
+      "difficulty": 1.8
+    },
+    {
+      "id": "C24",
+      "name": "Course 24 (Statistics)",
+      "skills_granted": [
+        "Statistics"
+      ],
+      "skills_required": [
+        "Deep Learning",
+        "Skill 84"
+      ],
+      "prerequisites": [
+        "C17",
+        "C23"
+      ],
+      "credits": 2,
+      "difficulty": 3.7
+    },
+    {
+      "id": "C25",
+      "name": "Course 25 (AI Ethics)",
+      "skills_granted": [
+        "AI Ethics"
+      ],
+      "skills_required": [
+        "Skill 99"
+      ],
+      "prerequisites": [
+        "C03",
+        "C08"
+      ],
+      "credits": 4,
+      "difficulty": 1.6
+    },
+    {
+      "id": "C26",
+      "name": "Course 26 (Computer Vision)",
+      "skills_granted": [
+        "Computer Vision"
+      ],
+      "skills_required": [
+        "Skill 79"
+      ],
+      "prerequisites": [
+        "C11",
+        "C16",
+        "C18"
+      ],
+      "credits": 2,
+      "difficulty": 1.8
+    },
+    {
+      "id": "C27",
+      "name": "Course 27 (Project Management, Skill 52)",
+      "skills_granted": [
+        "Project Management",
+        "Skill 52"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C01"
+      ],
+      "credits": 4,
+      "difficulty": 3.1
+    },
+    {
+      "id": "C28",
+      "name": "Course 28 (Skill 60)",
+      "skills_granted": [
+        "Skill 60"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 4,
+      "difficulty": 2.7
+    },
+    {
+      "id": "C29",
+      "name": "Course 29 (Skill 85)",
+      "skills_granted": [
+        "Skill 85"
+      ],
+      "skills_required": [
+        "Skill 28"
+      ],
+      "prerequisites": [
+        "C06"
+      ],
+      "credits": 5,
+      "difficulty": 4.3
+    },
+    {
+      "id": "C30",
+      "name": "Course 30 (Skill 78)",
+      "skills_granted": [
+        "Skill 78"
+      ],
+      "skills_required": [
+        "Algorithms"
+      ],
+      "prerequisites": [
+        "C13"
+      ],
+      "credits": 5,
+      "difficulty": 4.5
+    },
+    {
+      "id": "C31",
+      "name": "Course 31 (Natural Language Processing)",
+      "skills_granted": [
+        "Natural Language Processing"
+      ],
+      "skills_required": [
+        "Skill 61"
+      ],
+      "prerequisites": [
+        "C02",
+        "C07"
+      ],
+      "credits": 3,
+      "difficulty": 3.4
+    },
+    {
+      "id": "C32",
+      "name": "Course 32 (Skill 36)",
+      "skills_granted": [
+        "Skill 36"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 3.5
+    },
+    {
+      "id": "C33",
+      "name": "Course 33 (Skill 47)",
+      "skills_granted": [
+        "Skill 47"
+      ],
+      "skills_required": [
+        "Algorithms"
+      ],
+      "prerequisites": [
+        "C03",
+        "C13"
+      ],
+      "credits": 5,
+      "difficulty": 2.2
+    },
+    {
+      "id": "C34",
+      "name": "Course 34 (Skill 100)",
+      "skills_granted": [
+        "Skill 100"
+      ],
+      "skills_required": [
+        "Skill 64"
+      ],
+      "prerequisites": [
+        "C22"
+      ],
+      "credits": 3,
+      "difficulty": 3.6
+    },
+    {
+      "id": "C35",
+      "name": "Course 35 (Skill 26, Skill 32)",
+      "skills_granted": [
+        "Skill 26",
+        "Skill 32"
+      ],
+      "skills_required": [
+        "Skill 99"
+      ],
+      "prerequisites": [
+        "C03",
+        "C04"
+      ],
+      "credits": 2,
+      "difficulty": 4.4
+    },
+    {
+      "id": "C36",
+      "name": "Course 36 (Software Design)",
+      "skills_granted": [
+        "Software Design"
+      ],
+      "skills_required": [
+        "Skill 68",
+        "Skill 75"
+      ],
+      "prerequisites": [
+        "C09",
+        "C12"
+      ],
+      "credits": 5,
+      "difficulty": 2.6
+    },
+    {
+      "id": "C37",
+      "name": "Course 37 (Skill 72, Skill 98)",
+      "skills_granted": [
+        "Skill 72",
+        "Skill 98"
+      ],
+      "skills_required": [
+        "Skill 60"
+      ],
+      "prerequisites": [
+        "C28"
+      ],
+      "credits": 4,
+      "difficulty": 1.3
+    },
+    {
+      "id": "C38",
+      "name": "Course 38 (Skill 67)",
+      "skills_granted": [
+        "Skill 67"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C20"
+      ],
+      "credits": 5,
+      "difficulty": 2.7
+    },
+    {
+      "id": "C39",
+      "name": "Course 39 (Skill 87)",
+      "skills_granted": [
+        "Skill 87"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 4,
+      "difficulty": 2.0
+    },
+    {
+      "id": "C40",
+      "name": "Course 40 (Skill 71, Skill 73)",
+      "skills_granted": [
+        "Skill 71",
+        "Skill 73"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C01",
+        "C07",
+        "C08"
+      ],
+      "credits": 5,
+      "difficulty": 1.9
+    },
+    {
+      "id": "C41",
+      "name": "Course 41 (Databases, Distributed Systems)",
+      "skills_granted": [
+        "Databases",
+        "Distributed Systems"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C02",
+        "C25"
+      ],
+      "credits": 3,
+      "difficulty": 3.9
+    },
+    {
+      "id": "C42",
+      "name": "Course 42 (Skill 44)",
+      "skills_granted": [
+        "Skill 44"
+      ],
+      "skills_required": [
+        "Databases",
+        "Skill 47"
+      ],
+      "prerequisites": [
+        "C33",
+        "C41"
+      ],
+      "credits": 5,
+      "difficulty": 3.7
+    },
+    {
+      "id": "C43",
+      "name": "Course 43 (Skill 38, Skill 51)",
+      "skills_granted": [
+        "Skill 38",
+        "Skill 51"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 3,
+      "difficulty": 2.4
+    },
+    {
+      "id": "C44",
+      "name": "Course 44 (Skill 74)",
+      "skills_granted": [
+        "Skill 74"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 3,
+      "difficulty": 4.5
+    },
+    {
+      "id": "C45",
+      "name": "Course 45 (Data Engineering)",
+      "skills_granted": [
+        "Data Engineering"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C28"
+      ],
+      "credits": 3,
+      "difficulty": 4.3
+    },
+    {
+      "id": "C46",
+      "name": "Course 46 (Skill 58)",
+      "skills_granted": [
+        "Skill 58"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C26"
+      ],
+      "credits": 4,
+      "difficulty": 1.4
+    },
+    {
+      "id": "C47",
+      "name": "Course 47 (Skill 49)",
+      "skills_granted": [
+        "Skill 49"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C07",
+        "C34",
+        "C44"
+      ],
+      "credits": 2,
+      "difficulty": 4.9
+    },
+    {
+      "id": "C48",
+      "name": "Course 48 (Skill 39)",
+      "skills_granted": [
+        "Skill 39"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 5,
+      "difficulty": 4.1
+    },
+    {
+      "id": "C49",
+      "name": "Course 49 (Skill 25)",
+      "skills_granted": [
+        "Skill 25"
+      ],
+      "skills_required": [
+        "Statistics"
+      ],
+      "prerequisites": [
+        "C24"
+      ],
+      "credits": 3,
+      "difficulty": 3.2
+    },
+    {
+      "id": "C50",
+      "name": "Course 50 (Skill 46)",
+      "skills_granted": [
+        "Skill 46"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C26"
+      ],
+      "credits": 4,
+      "difficulty": 4.1
+    },
+    {
+      "id": "C51",
+      "name": "Course 51 (Skill 76)",
+      "skills_granted": [
+        "Skill 76"
+      ],
+      "skills_required": [
+        "Natural Language Processing",
+        "Skill 24"
+      ],
+      "prerequisites": [
+        "C08",
+        "C31"
+      ],
+      "credits": 3,
+      "difficulty": 1.9
+    },
+    {
+      "id": "C52",
+      "name": "Course 52 (Skill 27, Skill 83)",
+      "skills_granted": [
+        "Skill 27",
+        "Skill 83"
+      ],
+      "skills_required": [
+        "Machine Learning",
+        "Skill 37"
+      ],
+      "prerequisites": [
+        "C04",
+        "C19"
+      ],
+      "credits": 4,
+      "difficulty": 1.5
+    },
+    {
+      "id": "C53",
+      "name": "Course 53 (Skill 33, Skill 63)",
+      "skills_granted": [
+        "Skill 33",
+        "Skill 63"
+      ],
+      "skills_required": [
+        "Skill 37"
+      ],
+      "prerequisites": [
+        "C04",
+        "C06"
+      ],
+      "credits": 2,
+      "difficulty": 3.2
+    },
+    {
+      "id": "C54",
+      "name": "Course 54 (Communication, Skill 69)",
+      "skills_granted": [
+        "Communication",
+        "Skill 69"
+      ],
+      "skills_required": [
+        "Skill 82"
+      ],
+      "prerequisites": [
+        "C03",
+        "C23"
+      ],
+      "credits": 3,
+      "difficulty": 4.0
+    },
+    {
+      "id": "C55",
+      "name": "Course 55 (Skill 35)",
+      "skills_granted": [
+        "Skill 35"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 1.8
+    },
+    {
+      "id": "C56",
+      "name": "Course 56 (Skill 59)",
+      "skills_granted": [
+        "Skill 59"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 5,
+      "difficulty": 1.5
+    },
+    {
+      "id": "C57",
+      "name": "Course 57 (Skill 88)",
+      "skills_granted": [
+        "Skill 88"
+      ],
+      "skills_required": [
+        "Skill 46"
+      ],
+      "prerequisites": [
+        "C35",
+        "C50",
+        "C51"
+      ],
+      "credits": 5,
+      "difficulty": 4.0
+    },
+    {
+      "id": "C58",
+      "name": "Course 58 (Skill 81, Skill 97)",
+      "skills_granted": [
+        "Skill 81",
+        "Skill 97"
+      ],
+      "skills_required": [
+        "Distributed Systems",
+        "Skill 88"
+      ],
+      "prerequisites": [
+        "C41",
+        "C57"
+      ],
+      "credits": 5,
+      "difficulty": 3.9
+    },
+    {
+      "id": "C59",
+      "name": "Course 59 (Skill 86)",
+      "skills_granted": [
+        "Skill 86"
+      ],
+      "skills_required": [
+        "Skill 85",
+        "Skill 87"
+      ],
+      "prerequisites": [
+        "C01",
+        "C19",
+        "C23",
+        "C29",
+        "C39"
+      ],
+      "credits": 3,
+      "difficulty": 3.9
+    },
+    {
+      "id": "C60",
+      "name": "Course 60 (Skill 50)",
+      "skills_granted": [
+        "Skill 50"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 3,
+      "difficulty": 1.5
+    },
+    {
+      "id": "C61",
+      "name": "Course 61 (Skill 77, Skill 95)",
+      "skills_granted": [
+        "Skill 77",
+        "Skill 95"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 4,
+      "difficulty": 3.4
+    },
+    {
+      "id": "C62",
+      "name": "Course 62 (Skill 34)",
+      "skills_granted": [
+        "Skill 34"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C40",
+        "C55"
+      ],
+      "credits": 4,
+      "difficulty": 1.6
+    },
+    {
+      "id": "C63",
+      "name": "Course 63 (Skill 21, Skill 80)",
+      "skills_granted": [
+        "Skill 21",
+        "Skill 80"
+      ],
+      "skills_required": [
+        "Skill 89"
+      ],
+      "prerequisites": [
+        "C02",
+        "C03",
+        "C05",
+        "C21",
+        "C37"
+      ],
+      "credits": 2,
+      "difficulty": 3.6
+    },
+    {
+      "id": "C64",
+      "name": "Course 64 (Skill 23)",
+      "skills_granted": [
+        "Skill 23"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C45"
+      ],
+      "credits": 4,
+      "difficulty": 1.9
+    },
+    {
+      "id": "C65",
+      "name": "Course 65 (Skill 42)",
+      "skills_granted": [
+        "Skill 42"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C17",
+        "C28"
+      ],
+      "credits": 5,
+      "difficulty": 2.8
+    },
+    {
+      "id": "C66",
+      "name": "Course 66 (Skill 94)",
+      "skills_granted": [
+        "Skill 94"
+      ],
+      "skills_required": [
+        "Skill 38"
+      ],
+      "prerequisites": [
+        "C42",
+        "C43",
+        "C44"
+      ],
+      "credits": 4,
+      "difficulty": 4.7
+    },
+    {
+      "id": "C67",
+      "name": "Course 67 (Data Analysis, Skill 29)",
+      "skills_granted": [
+        "Data Analysis",
+        "Skill 29"
+      ],
+      "skills_required": [
+        "Skill 77"
+      ],
+      "prerequisites": [
+        "C61"
+      ],
+      "credits": 3,
+      "difficulty": 3.5
+    },
+    {
+      "id": "C68",
+      "name": "Course 68 (Skill 45)",
+      "skills_granted": [
+        "Skill 45"
+      ],
+      "skills_required": [
+        "Skill 57"
+      ],
+      "prerequisites": [
+        "C02",
+        "C13",
+        "C19",
+        "C27",
+        "C32",
+        "C49",
+        "C56"
+      ],
+      "credits": 3,
+      "difficulty": 4.6
+    },
+    {
+      "id": "C69",
+      "name": "Course 69 (Skill 91)",
+      "skills_granted": [
+        "Skill 91"
+      ],
+      "skills_required": [
+        "Skill 62"
+      ],
+      "prerequisites": [
+        "C05",
+        "C36"
+      ],
+      "credits": 5,
+      "difficulty": 4.2
+    },
+    {
+      "id": "C70",
+      "name": "Course 70 (Skill 92)",
+      "skills_granted": [
+        "Skill 92"
+      ],
+      "skills_required": [
+        "Skill 70"
+      ],
+      "prerequisites": [
+        "C12",
+        "C21",
+        "C29"
+      ],
+      "credits": 2,
+      "difficulty": 1.8
+    },
+    {
+      "id": "C71",
+      "name": "Course 71 (Skill 40)",
+      "skills_granted": [
+        "Skill 40"
+      ],
+      "skills_required": [
+        "Skill 54"
+      ],
+      "prerequisites": [
+        "C01"
+      ],
+      "credits": 5,
+      "difficulty": 3.6
+    },
+    {
+      "id": "C72",
+      "name": "Course 72 (Skill 90)",
+      "skills_granted": [
+        "Skill 90"
+      ],
+      "skills_required": [
+        "Skill 81"
+      ],
+      "prerequisites": [
+        "C58"
+      ],
+      "credits": 3,
+      "difficulty": 4.2
+    },
+    {
+      "id": "C73",
+      "name": "Course 73 (Cloud Computing)",
+      "skills_granted": [
+        "Cloud Computing"
+      ],
+      "skills_required": [
+        "Skill 50"
+      ],
+      "prerequisites": [
+        "C60"
+      ],
+      "credits": 5,
+      "difficulty": 1.2
+    },
+    {
+      "id": "C74",
+      "name": "Course 74 (Skill 41, Skill 93)",
+      "skills_granted": [
+        "Skill 41",
+        "Skill 93"
+      ],
+      "skills_required": [
+        "Skill 58"
+      ],
+      "prerequisites": [
+        "C46"
+      ],
+      "credits": 4,
+      "difficulty": 4.0
+    },
+    {
+      "id": "C75",
+      "name": "Course 75 (Skill 96)",
+      "skills_granted": [
+        "Skill 96"
+      ],
+      "skills_required": [
+        "Skill 57"
+      ],
+      "prerequisites": [
+        "C19",
+        "C28",
+        "C33",
+        "C71"
+      ],
+      "credits": 5,
+      "difficulty": 3.6
+    },
+    {
+      "id": "C76",
+      "name": "Course 76 (DevOps)",
+      "skills_granted": [
+        "DevOps"
+      ],
+      "skills_required": [
+        "Skill 65"
+      ],
+      "prerequisites": [
+        "C09",
+        "C58"
+      ],
+      "credits": 2,
+      "difficulty": 3.0
+    },
+    {
+      "id": "C77",
+      "name": "Course 77 (Skill 85)",
+      "skills_granted": [
+        "Skill 85"
+      ],
+      "skills_required": [
+        "Skill 57",
+        "Skill 98"
+      ],
+      "prerequisites": [
+        "C19",
+        "C37"
+      ],
+      "credits": 4,
+      "difficulty": 3.5
+    },
+    {
+      "id": "C78",
+      "name": "Course 78 (Skill 48)",
+      "skills_granted": [
+        "Skill 48"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C57"
+      ],
+      "credits": 3,
+      "difficulty": 1.2
+    },
+    {
+      "id": "C79",
+      "name": "Course 79 (Skill 73)",
+      "skills_granted": [
+        "Skill 73"
+      ],
+      "skills_required": [
+        "Project Management",
+        "Skill 83"
+      ],
+      "prerequisites": [
+        "C06",
+        "C14",
+        "C21",
+        "C27",
+        "C52"
+      ],
+      "credits": 2,
+      "difficulty": 2.3
+    },
+    {
+      "id": "C80",
+      "name": "Course 80 (Skill 27, Skill 32)",
+      "skills_granted": [
+        "Skill 27",
+        "Skill 32"
+      ],
+      "skills_required": [
+        "Skill 79"
+      ],
+      "prerequisites": [
+        "C16"
+      ],
+      "credits": 2,
+      "difficulty": 4.6
+    },
+    {
+      "id": "C81",
+      "name": "Course 81 (Skill 21)",
+      "skills_granted": [
+        "Skill 21"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C67"
+      ],
+      "credits": 3,
+      "difficulty": 4.4
+    },
+    {
+      "id": "C82",
+      "name": "Course 82 (Skill 99)",
+      "skills_granted": [
+        "Skill 99"
+      ],
+      "skills_required": [
+        "Skill 33",
+        "Skill 57"
+      ],
+      "prerequisites": [
+        "C19",
+        "C53",
+        "C63",
+        "C80"
+      ],
+      "credits": 2,
+      "difficulty": 4.3
+    },
+    {
+      "id": "C83",
+      "name": "Course 83 (Communication)",
+      "skills_granted": [
+        "Communication"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C23",
+        "C24",
+        "C33"
+      ],
+      "credits": 3,
+      "difficulty": 2.7
+    },
+    {
+      "id": "C84",
+      "name": "Course 84 (Machine Learning)",
+      "skills_granted": [
+        "Machine Learning"
+      ],
+      "skills_required": [
+        "AI Ethics",
+        "Communication"
+      ],
+      "prerequisites": [
+        "C17",
+        "C25",
+        "C83"
+      ],
+      "credits": 4,
+      "difficulty": 3.7
+    },
+    {
+      "id": "C85",
+      "name": "Course 85 (Software Design)",
+      "skills_granted": [
+        "Software Design"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C35",
+        "C49",
+        "C78"
+      ],
+      "credits": 4,
+      "difficulty": 1.4
+    },
+    {
+      "id": "C86",
+      "name": "Course 86 (Natural Language Processing, Skill 96)",
+      "skills_granted": [
+        "Natural Language Processing",
+        "Skill 96"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C78"
+      ],
+      "credits": 5,
+      "difficulty": 2.9
+    },
+    {
+      "id": "C87",
+      "name": "Course 87 (Python, Skill 50)",
+      "skills_granted": [
+        "Python",
+        "Skill 50"
+      ],
+      "skills_required": [
+        "Computer Vision"
+      ],
+      "prerequisites": [
+        "C18",
+        "C26",
+        "C38",
+        "C67"
+      ],
+      "credits": 2,
+      "difficulty": 2.6
+    },
+    {
+      "id": "C88",
+      "name": "Course 88 (Skill 44, Skill 84)",
+      "skills_granted": [
+        "Skill 44",
+        "Skill 84"
+      ],
+      "skills_required": [
+        "Skill 48",
+        "Skill 66"
+      ],
+      "prerequisites": [
+        "C07",
+        "C11",
+        "C12",
+        "C49",
+        "C51"
+      ],
+      "credits": 3,
+      "difficulty": 1.8
+    },
+    {
+      "id": "C89",
+      "name": "Course 89 (Skill 28, Skill 83)",
+      "skills_granted": [
+        "Skill 28",
+        "Skill 83"
+      ],
+      "skills_required": [
+        "Skill 83"
+      ],
+      "prerequisites": [
+        "C52",
+        "C62",
+        "C80"
+      ],
+      "credits": 3,
+      "difficulty": 1.8
+    },
+    {
+      "id": "C90",
+      "name": "Course 90 (Skill 62)",
+      "skills_granted": [
+        "Skill 62"
+      ],
+      "skills_required": [
+        "Skill 30"
+      ],
+      "prerequisites": [
+        "C01",
+        "C15"
+      ],
+      "credits": 2,
+      "difficulty": 2.5
+    },
+    {
+      "id": "C91",
+      "name": "Course 91 (AI Ethics, Data Engineering)",
+      "skills_granted": [
+        "AI Ethics",
+        "Data Engineering"
+      ],
+      "skills_required": [
+        "Skill 47"
+      ],
+      "prerequisites": [
+        "C03",
+        "C33",
+        "C34",
+        "C85",
+        "C90"
+      ],
+      "credits": 3,
+      "difficulty": 3.0
+    },
+    {
+      "id": "C92",
+      "name": "Course 92 (Skill 29)",
+      "skills_granted": [
+        "Skill 29"
+      ],
+      "skills_required": [
+        "Skill 71"
+      ],
+      "prerequisites": [
+        "C33",
+        "C40",
+        "C49"
+      ],
+      "credits": 5,
+      "difficulty": 2.7
+    },
+    {
+      "id": "C93",
+      "name": "Course 93 (Cloud Computing)",
+      "skills_granted": [
+        "Cloud Computing"
+      ],
+      "skills_required": [
+        "Skill 56"
+      ],
+      "prerequisites": [
+        "C17",
+        "C26",
+        "C52",
+        "C63",
+        "C87"
+      ],
+      "credits": 2,
+      "difficulty": 4.5
+    },
+    {
+      "id": "C94",
+      "name": "Course 94 (Skill 80)",
+      "skills_granted": [
+        "Skill 80"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 2,
+      "difficulty": 2.8
+    },
+    {
+      "id": "C95",
+      "name": "Course 95 (Skill 97)",
+      "skills_granted": [
+        "Skill 97"
+      ],
+      "skills_required": [],
+      "prerequisites": [],
+      "credits": 3,
+      "difficulty": 4.7
+    },
+    {
+      "id": "C96",
+      "name": "Course 96 (Skill 70)",
+      "skills_granted": [
+        "Skill 70"
+      ],
+      "skills_required": [
+        "Skill 100"
+      ],
+      "prerequisites": [
+        "C11",
+        "C34",
+        "C82"
+      ],
+      "credits": 5,
+      "difficulty": 1.0
+    },
+    {
+      "id": "C97",
+      "name": "Course 97 (Skill 35)",
+      "skills_granted": [
+        "Skill 35"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C64",
+        "C83"
+      ],
+      "credits": 3,
+      "difficulty": 2.0
+    },
+    {
+      "id": "C98",
+      "name": "Course 98 (Skill 36, Skill 95)",
+      "skills_granted": [
+        "Skill 36",
+        "Skill 95"
+      ],
+      "skills_required": [
+        "Skill 41"
+      ],
+      "prerequisites": [
+        "C03",
+        "C19",
+        "C46",
+        "C57",
+        "C74"
+      ],
+      "credits": 4,
+      "difficulty": 4.0
+    },
+    {
+      "id": "C99",
+      "name": "Course 99 (Skill 85)",
+      "skills_granted": [
+        "Skill 85"
+      ],
+      "skills_required": [
+        "Skill 60"
+      ],
+      "prerequisites": [
+        "C28",
+        "C50"
+      ],
+      "credits": 5,
+      "difficulty": 1.9
+    },
+    {
+      "id": "C100",
+      "name": "Course 100 (Skill 57, Skill 63)",
+      "skills_granted": [
+        "Skill 57",
+        "Skill 63"
+      ],
+      "skills_required": [
+        "Skill 98"
+      ],
+      "prerequisites": [
+        "C37",
+        "C38",
+        "C45",
+        "C60"
+      ],
+      "credits": 4,
+      "difficulty": 4.4
+    }
+  ],
+  "initial_skills": [],
+  "target_skills": [
+    "Project Management",
+    "Skill 41",
+    "Skill 97"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "skills": [
+    "Python",
+    "SQL",
+    "Machine Learning"
+  ],
+  "courses": [
+    {
+      "id": "C1",
+      "name": "Intro to Python",
+      "skills_granted": [
+        "Python"
+      ],
+      "skills_required": [],
+      "prerequisites": [
+        "C3"
+      ],
+      "credits": 3,
+      "difficulty": 1.0
+    },
+    {
+      "id": "C2",
+      "name": "SQL Basics",
+      "skills_granted": [
+        "SQL"
+      ],
+      "skills_required": [
+        "Python"
+      ],
+      "prerequisites": [
+        "C1"
+      ],
+      "credits": 3,
+      "difficulty": 1.2
+    },
+    {
+      "id": "C3",
+      "name": "Machine Learning Overview",
+      "skills_granted": [
+        "Machine Learning"
+      ],
+      "skills_required": [
+        "SQL"
+      ],
+      "prerequisites": [
+        "C2"
+      ],
+      "credits": 4,
+      "difficulty": 2.0
+    }
+  ],
+  "initial_skills": [],
+  "target_skills": [
+    "Machine Learning"
+  ]
+}
