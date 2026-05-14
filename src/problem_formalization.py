@@ -77,6 +77,39 @@ def compute_trajectory_cost(trajectory: List[CourseId], instance: PlanningInstan
     return sum(instance.courses[course_id].credits for course_id in trajectory if course_id in instance.courses)
 
 
+def available_courses(
+    instance: PlanningInstance,
+    acquired_skills: Set[Skill],
+    completed_courses: Set[CourseId],
+) -> List[Course]:
+    """Return the list of courses that can be taken next given the current state."""
+    return [
+        course
+        for course in instance.courses.values()
+        if course.id not in completed_courses and is_course_available(course, acquired_skills, completed_courses)
+    ]
+
+
+def skills_after_sequence(
+    trajectory: List[CourseId],
+    instance: PlanningInstance,
+    initial_skills: Optional[Set[Skill]] = None,
+) -> Set[Skill]:
+    """Return the set of acquired skills after applying the given trajectory."""
+    if initial_skills is None:
+        initial_skills = set(instance.initial_skills)
+    acquired_skills = set(initial_skills)
+    completed_courses: Set[CourseId] = set()
+    for course_id in trajectory:
+        if course_id not in instance.courses:
+            raise ValueError(f"Course '{course_id}' not found in instance.")
+        course = instance.courses[course_id]
+        if not is_course_available(course, acquired_skills, completed_courses):
+            raise ValueError(f"Course '{course_id}' cannot be taken with current skills or prerequisites.")
+        apply_course(course, acquired_skills, completed_courses)
+    return acquired_skills
+
+
 def build_solution(
     trajectory: List[CourseId],
     instance: PlanningInstance,
