@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
+
 from dataclasses import dataclass, field
 from typing import Dict, List, Set, Optional
+from pathlib import Path
+
 
 Skill = str
 CourseId = str
@@ -170,3 +174,32 @@ def example_instance() -> PlanningInstance:
         initial_skills=set(),
         target_skills={"Machine Learning"},
     )
+
+
+def load_instance_from_dict(data: Dict[str, object]) -> PlanningInstance:
+    courses = {
+        course_data["id"]: Course(
+            id=course_data["id"],
+            name=course_data["name"],
+            skills_granted=set(course_data.get("skills_granted", [])),
+            skills_required=set(course_data.get("skills_required", [])),
+            prerequisites=set(course_data.get("prerequisites", [])),
+            credits=int(course_data.get("credits", 0)),
+            difficulty=float(course_data.get("difficulty", 1.0)),
+            description=course_data.get("description"),
+        )
+        for course_data in data.get("courses", [])
+    }
+
+    return PlanningInstance(
+        skills=set(data.get("skills", [])),
+        courses=courses,
+        initial_skills=set(data.get("initial_skills", [])),
+        target_skills=set(data.get("target_skills", [])),
+    )
+
+
+def load_instance_from_file(path: Path) -> PlanningInstance:
+    with path.open("r", encoding="utf-8") as stream:
+        data = json.load(stream)
+    return load_instance_from_dict(data)

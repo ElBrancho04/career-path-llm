@@ -60,7 +60,7 @@ def greedy_search(
     success = instance.target_skills.issubset(acquired_skills)
 
     return {
-        "trajectory": trajectory if trajectory else None,
+        "trajectory": trajectory if success else None,
         "total_cost": total_cost,
         "elapsed_time": elapsed_time,
         "num_courses": len(trajectory),
