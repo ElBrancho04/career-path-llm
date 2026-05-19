@@ -135,6 +135,14 @@ def verify_instance_selection() -> None:
         missing.sort()
         raise FileNotFoundError("Missing required phase 6 instance files: " + ", ".join(missing))
 
+    counts = {"small": 0, "medium": 0, "large": 0, "manual": 0}
+    for filename in expected_files:
+        path = INSTANCES_DIR / filename
+        counts[get_instance_size(path)] += 1
+    expected_counts = {"small": 10, "medium": 10, "large": 5, "manual": 5}
+    if counts != expected_counts:
+        raise ValueError(f"Phase 6 instance selection counts mismatch: expected {expected_counts}, found {counts}")
+
     actual_files = {path.name for path in INSTANCES_DIR.iterdir() if path.is_file()}
     extra_files = sorted(actual_files - expected_files)
     if extra_files:
@@ -152,6 +160,36 @@ def get_variant_type(variant: str) -> str:
     if variant in {"C", "D"}:
         return "guided"
     return "unknown"
+
+
+def build_error_row(
+    instance_path: str,
+    variant: str,
+    algorithm: str,
+    seed: int,
+    instance_size: str,
+    run_number: int,
+    error: Exception,
+) -> Dict[str, Any]:
+    return {
+        "instance": Path(instance_path).name,
+        "instance_size": instance_size,
+        "variant": variant,
+        "algorithm": algorithm,
+        "seed": seed,
+        "run": run_number,
+        "success": 0,
+        "total_cost": None,
+        "num_courses": None,
+        "elapsed_time": None,
+        "llm_calls": 0,
+        "llm_evaluation_score": None,
+        "llm_evaluation_nota": None,
+        "trajectory_found": 0,
+        "variant_type": get_variant_type(variant),
+        "error_message": str(error),
+        "failed": 1,
+    }
 
 
 def build_result_row(
@@ -178,6 +216,8 @@ def build_result_row(
         "llm_evaluation_nota": llm_evaluation.get("nota"),
         "trajectory_found": 0 if trajectory is None else 1,
         "variant_type": get_variant_type(execution["variant"]),
+        "error_message": None,
+        "failed": 0,
     }
 
 
@@ -192,14 +232,27 @@ def run_experiment_repetitions() -> List[Dict[str, Any]]:
             objective_value = get_objective_for_variant(instance, variant)
             for algorithm in ALGORITHMS:
                 for run_number, seed in enumerate(SEEDS, start=1):
-                    execution = run_single_execution(
-                        instance_path,
-                        variant,
-                        algorithm,
-                        objective_value,
-                        seed,
-                    )
-                    rows.append(build_result_row(execution, instance_size, run_number))
+                    try:
+                        execution = run_single_execution(
+                            instance_path,
+                            variant,
+                            algorithm,
+                            objective_value,
+                            seed,
+                        )
+                        rows.append(build_result_row(execution, instance_size, run_number))
+                    except Exception as exc:
+                        rows.append(
+                            build_error_row(
+                                instance_path,
+                                variant,
+                                algorithm,
+                                seed,
+                                instance_size,
+                                run_number,
+                                exc,
+                            )
+                        )
     return rows
 
 
