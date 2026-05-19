@@ -9,6 +9,7 @@ from src.a_star import a_star_search
 from src.greedy import greedy_search
 from src.llm_interface import evaluate_trajectory, interpret_objective, suggest_next_course
 from src.problem_formalization import PlanningInstance, load_instance_from_file
+from src.problem_formalization import available_courses
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +139,69 @@ def run_guided_variant(
 ) -> VariantResult:
     if not use_ollama:
         raise ValueError("guided variant requires Ollama enabled.")
-    raise NotImplementedError("Guided variant is implemented in the next phase.")
+    start_time = time.perf_counter()
+    acquired_skills = set(instance.initial_skills)
+    completed_courses: Set[str] = set()
+    trajectory: list = []
+    llm_step_log: list = []
+    llm_calls = 0
+    last_suggestion: Optional[Dict[str, Any]] = None
+
+    while not objective.issubset(acquired_skills):
+        candidates = available_courses(instance, acquired_skills, completed_courses)
+        if not candidates:
+            break
+
+        llm_calls += 1
+        suggestion = suggest_next_course(trajectory, instance, objective)
+        chosen_course_id = suggestion.get("course_id")
+        source = "llm"
+        if chosen_course_id not in {course.id for course in candidates}:
+            fallback_result = run_algorithm(instance, objective, algorithm_name)
+            fallback_trajectory = fallback_result.get("trajectory") or []
+            chosen_course_id = fallback_trajectory[0] if fallback_trajectory else None
+            source = "fallback"
+            suggestion["justification"] = suggestion.get("justification") or "LLM failed; using fallback."
+
+        if not chosen_course_id or chosen_course_id in completed_courses:
+            break
+
+        chosen_course = next((course for course in candidates if course.id == chosen_course_id), None)
+        if chosen_course is None:
+            break
+
+        acquired_skills.update(chosen_course.skills_granted)
+        completed_courses.add(chosen_course_id)
+        trajectory.append(chosen_course_id)
+        suggestion_match = source == "llm" and suggestion.get("course_id") == chosen_course_id
+        llm_step_log.append(
+            {
+                "chosen_course": chosen_course_id,
+                "source": source,
+                "suggestion_match": suggestion_match,
+                "available_courses": [f"{course.id} ({course.name})" for course in candidates],
+                "justification": suggestion.get("justification"),
+            }
+        )
+        last_suggestion = suggestion
+
+    total_cost = 0
+    num_courses = len(trajectory)
+    success = objective.issubset(acquired_skills)
+    if trajectory:
+        total_cost = sum(instance.courses[course_id].credits for course_id in trajectory if course_id in instance.courses)
+    elapsed_time = time.perf_counter() - start_time
+
+    return _build_common_result(
+        trajectory=trajectory if success else None,
+        total_cost=total_cost,
+        elapsed_time=elapsed_time,
+        num_courses=num_courses,
+        success=success,
+        llm_calls=llm_calls,
+        llm_suggestion=last_suggestion,
+        llm_step_log=llm_step_log,
+    )
 
 
 def run_variant(
