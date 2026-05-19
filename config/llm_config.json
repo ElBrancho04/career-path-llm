@@ -1,0 +1,6 @@
+{
+  "model": "qwen2.5:3b",
+  "temperature": 0.1,
+  "max_tokens": 256,
+  "endpoint_local": "http://localhost:11434"
+}
