@@ -112,7 +112,19 @@ def run_evaluate_variant(
     if not use_ollama:
         raise ValueError("evaluate variant requires Ollama enabled.")
     base_result = run_base_variant(instance, objective, algorithm_name)
-    llm_eval = evaluate_trajectory(base_result["trajectory"] or [], instance, objective)
+    try:
+        llm_eval = evaluate_trajectory(base_result["trajectory"] or [], instance, objective)
+    except Exception as exc:
+        logger.warning("run_evaluate_variant: evaluation failed: %s", exc)
+        llm_eval = {
+            "score": None,
+            "nota": None,
+            "justification": f"Evaluation failed: {exc}",
+            "qualitative_comment": "LLM evaluation unavailable due to error.",
+            "llm_response": None,
+            "valid": base_result.get("success", False),
+            "coverage": None,
+        }
     base_result["llm_calls"] = 1
     base_result["llm_evaluation"] = llm_eval
     return base_result
