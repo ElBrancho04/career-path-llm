@@ -1,10 +1,17 @@
 from __future__ import annotations
 
+import pandas as pd
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
+
+from src.variant_runner import load_instance_from_file, run_variant
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 INSTANCES_DIR = ROOT_DIR / "data" / "instances"
+
+VARIANTS = ["A", "B", "C", "D"]
+ALGORITHMS = ["greedy", "a_star"]
+SEEDS = [1, 2, 3, 4, 5]
 
 SMALL_INSTANCES = [f"synthetic_10_courses_{i:02d}.json" for i in range(1, 11)]
 MEDIUM_INSTANCES = [f"synthetic_30_courses_{i:02d}.json" for i in range(1, 11)]
@@ -17,27 +24,12 @@ MANUAL_INSTANCES = [
     "manual_05_full_chain.json",
 ]
 
-SIZE_LABELS: Dict[str, str] = {
-    "synthetic_10_courses": "small",
-    "synthetic_30_courses": "medium",
-    "synthetic_100_courses": "large",
-    "manual": "manual",
+SIZE_LABELS = {
+    "synthetic_10_courses_": "small",
+    "synthetic_30_courses_": "medium",
+    "synthetic_100_courses_": "large",
+    "manual_": "manual",
 }
-
-
-def build_instance_catalog() -> List[Dict[str, str]]:
-    """Return the fixed instance catalog for phase 6 with size labels.
-
-    Only the required files listed for phase 6 are included.
-    """
-    instance_files: List[Dict[str, str]] = []
-    for filename in SMALL_INSTANCES + MEDIUM_INSTANCES + LARGE_INSTANCES + MANUAL_INSTANCES:
-        path = INSTANCES_DIR / filename
-        if not path.exists():
-            raise FileNotFoundError(f"Required instance file not found: {path}")
-        size = get_instance_size(path)
-        instance_files.append({"path": str(path), "size": size})
-    return instance_files
 
 
 def get_instance_size(instance_path: Path) -> str:
@@ -54,19 +46,65 @@ def get_instance_size(instance_path: Path) -> str:
     raise ValueError(f"Unexpected instance file name for phase 6 selection: {name}")
 
 
+def build_instance_catalog() -> List[Dict[str, str]]:
+    """Return the fixed instance catalog for phase 6 with size labels.
+
+    Only the required files listed for phase 6 are included.
+    """
+    instance_files: List[Dict[str, str]] = []
+    for filename in SMALL_INSTANCES + MEDIUM_INSTANCES + LARGE_INSTANCES + MANUAL_INSTANCES:
+        path = INSTANCES_DIR / filename
+        if not path.exists():
+            raise FileNotFoundError(f"Required instance file not found: {path}")
+        instance_files.append({"path": str(path), "size": get_instance_size(path)})
+    return instance_files
+
+
+def normalize_objective(variant: str, objective_text: str) -> Any:
+    """Normalize the objective based on the variant."""
+    if variant == "B":
+        return objective_text
+    return set(map(str.strip, objective_text.split(",")))
+
+
+def run_single_execution(
+    instance_path: str,
+    variant: str,
+    algorithm: str,
+    objective_value: Any,
+    seed: int,
+) -> Dict[str, Any]:
+    """Run a single execution of the variant on the given instance."""
+    instance = load_instance_from_file(Path(instance_path))
+    use_ollama = variant in {"B", "C", "D"}
+    result = run_variant(
+        variant,
+        instance,
+        objective_value,
+        algorithm_name=algorithm,
+        use_ollama=use_ollama,
+        instance_name=Path(instance_path).name,
+    )
+    return {
+        "instance_path": instance_path,
+        "variant": variant,
+        "algorithm": algorithm,
+        "seed": seed,
+        "objective_value": objective_value,
+        "result": result,
+    }
+
+
 def verify_instance_selection() -> None:
     """Verify the fixed phase 6 instance selection exists and is complete."""
     expected_files = set(SMALL_INSTANCES + MEDIUM_INSTANCES + LARGE_INSTANCES + MANUAL_INSTANCES)
     missing = [filename for filename in expected_files if not (INSTANCES_DIR / filename).exists()]
     if missing:
         missing.sort()
-        raise FileNotFoundError(
-            "Missing required phase 6 instance files: " + ", ".join(missing)
-        )
+        raise FileNotFoundError("Missing required phase 6 instance files: " + ", ".join(missing))
 
     actual_files = {path.name for path in INSTANCES_DIR.iterdir() if path.is_file()}
-    selected_files = expected_files
-    extra_files = sorted(actual_files - selected_files)
+    extra_files = sorted(actual_files - expected_files)
     if extra_files:
         print(
             "Warning: data/instances contains extra files not used in phase 6 selection:",
@@ -77,8 +115,5 @@ def verify_instance_selection() -> None:
 if __name__ == "__main__":
     verify_instance_selection()
     catalog = build_instance_catalog()
-    print(f"Verified {len(catalog)} phase 6 instances.")
-    counts = {"small": 0, "medium": 0, "large": 0, "manual": 0}
-    for entry in catalog:
-        counts[entry["size"]] += 1
-    print("Instance counts:", counts)
+    print(f"Verified {len(catalog)} fixed phase 6 instances.")
+    print("First instance entry:", catalog[0])
