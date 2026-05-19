@@ -3,9 +3,15 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Optional, Set
 
 from src.llm_wrapper import call_ollama
+from src.problem_formalization import (
+    PlanningInstance,
+    compute_trajectory_cost,
+    is_valid_trajectory,
+    skills_after_sequence,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +84,85 @@ def _parse_json_snippet(text: str) -> Dict[str, Any]:
             pass
 
     raise ValueError("No valid JSON found in response text.")
+
+
+def _build_evaluate_prompt(objective: Set[str], trajectory: List[str], instance: PlanningInstance) -> str:
+    course_list = [f"{course_id} ({instance.courses[course_id].name})" for course_id in trajectory]
+    objective_str = ", ".join(sorted(objective))
+    return (
+        f"Evalúa la siguiente secuencia de cursos para alcanzar el objetivo {objective_str}. "
+        f"Cursos: {course_list}. "
+        'Devuelve únicamente un JSON: {"nota": float, "justificacion": "..."}.',
+    )
+
+
+def _parse_evaluate_response(response: Dict[str, Any]) -> Dict[str, Any]:
+    raw_text = _extract_text_from_response(response)
+    parsed = _parse_json_snippet(raw_text)
+    nota = parsed.get("nota")
+    justificacion = parsed.get("justificacion")
+    if nota is None or justificacion is None:
+        raise ValueError("LLM response missing nota or justificacion.")
+    return {
+        "nota": float(nota),
+        "justificacion": str(justificacion),
+        "raw_text": raw_text,
+    }
+
+
+def _heuristic_score(
+    trajectory: List[str],
+    instance: PlanningInstance,
+    objective: Set[str],
+) -> float:
+    if not objective:
+        return 10.0
+
+    acquired_skills = set(instance.initial_skills)
+    for course_id in trajectory:
+        if course_id in instance.courses:
+            acquired_skills.update(instance.courses[course_id].skills_granted)
+
+    coverage = len(acquired_skills & objective) / len(objective)
+    validity = 1.0 if is_valid_trajectory(trajectory, instance) else 0.0
+    course_penalty = max(0.0, 1.0 - (len(trajectory) / max(len(instance.courses), 1)))
+    score = 10.0 * (0.5 * coverage + 0.3 * validity + 0.2 * course_penalty)
+    return max(0.0, min(10.0, score))
+
+
+def evaluate_trajectory(
+    trajectory: List[str],
+    instance: PlanningInstance,
+    objective: Set[str],
+) -> Dict[str, Any]:
+    prompt = _build_evaluate_prompt(objective, trajectory, instance)
+    llm_response: Optional[Dict[str, Any]] = None
+    llm_result: Dict[str, Any] = {}
+    try:
+        llm_response = call_ollama(prompt)
+        llm_result = _parse_evaluate_response(llm_response)
+    except Exception as exc:
+        logger.warning("evaluate_trajectory: LLM evaluation failed: %s", exc)
+        llm_result = {"nota": None, "justificacion": "LLM evaluation not available."}
+
+    heuristic = _heuristic_score(trajectory, instance, objective)
+    valid = is_valid_trajectory(trajectory, instance)
+    acquired_skills = skills_after_sequence(trajectory, instance, instance.initial_skills)
+    coverage = len(acquired_skills & objective) / len(objective) if objective else 1.0
+    qualitative_comment = (
+        f"La trayectoria {'es válida' if valid else 'no es válida'}. "
+        f"Cobertura del objetivo: {coverage:.2f}. Cursos: {len(trajectory)}."
+    )
+
+    return {
+        "score": heuristic,
+        "nota": llm_result.get("nota"),
+        "justification": llm_result.get("justificacion"),
+        "qualitative_comment": qualitative_comment,
+        "llm_response": llm_response,
+        "valid": valid,
+        "coverage": coverage,
+    }
 
 
 def interpret_objective(text: str) -> Set[str]:

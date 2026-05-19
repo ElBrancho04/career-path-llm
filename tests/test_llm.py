@@ -8,7 +8,8 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.llm_interface import interpret_objective
+from src.llm_interface import evaluate_trajectory, interpret_objective
+from src.problem_formalization import Course, PlanningInstance
 
 
 class TestLLMInterface(unittest.TestCase):
@@ -54,6 +55,75 @@ class TestLLMInterface(unittest.TestCase):
         }
         result = interpret_objective("Quiero destacar en SQL y cloud.")
         self.assertEqual(result, {"SQL", "Cloud Computing"})
+
+    @patch("src.llm_interface.call_ollama")
+    def test_evaluate_trajectory_valid_llm_response(self, mock_call):
+        mock_call.return_value = {
+            "choices": [
+                {
+                    "message": {
+                        "content": '{"nota": 8.5, "justificacion": "Buena trayectoria."}'
+                    }
+                }
+            ]
+        }
+        instance = PlanningInstance(
+            skills={"Python", "SQL"},
+            courses={
+                "C1": Course(
+                    id="C1",
+                    name="Intro Python",
+                    skills_granted={"Python"},
+                    skills_required=set(),
+                    prerequisites=set(),
+                    credits=3,
+                    difficulty=1.0,
+                ),
+                "C2": Course(
+                    id="C2",
+                    name="SQL Basics",
+                    skills_granted={"SQL"},
+                    skills_required={"Python"},
+                    prerequisites={"C1"},
+                    credits=3,
+                    difficulty=1.0,
+                ),
+            },
+            initial_skills=set(),
+            target_skills={"SQL"},
+        )
+        result = evaluate_trajectory(["C1", "C2"], instance, {"SQL"})
+        self.assertEqual(result["nota"], 8.5)
+        self.assertEqual(result["justification"], "Buena trayectoria.")
+        self.assertTrue(0.0 <= result["score"] <= 10.0)
+        self.assertTrue(result["valid"])
+        self.assertEqual(result["coverage"], 1.0)
+
+    @patch("src.llm_interface.call_ollama")
+    def test_evaluate_trajectory_invalid_llm_response(self, mock_call):
+        mock_call.return_value = {"choices": [{"message": {"content": 'Error inesperado'}}]}
+        instance = PlanningInstance(
+            skills={"Python"},
+            courses={
+                "C1": Course(
+                    id="C1",
+                    name="Intro Python",
+                    skills_granted={"Python"},
+                    skills_required=set(),
+                    prerequisites=set(),
+                    credits=3,
+                    difficulty=1.0,
+                )
+            },
+            initial_skills=set(),
+            target_skills={"Python"},
+        )
+        result = evaluate_trajectory(["C1"], instance, {"Python"})
+        self.assertIsNone(result["nota"])
+        self.assertIn("LLM evaluation not available", result["justification"])
+        self.assertTrue(0.0 <= result["score"] <= 10.0)
+        self.assertTrue(result["valid"])
+        self.assertEqual(result["coverage"], 1.0)
 
 
 if __name__ == "__main__":

@@ -6,3 +6,7 @@
 2026-05-18 23:29:57,184 [WARNING] interpret_objective first attempt failed: No valid JSON found in response text.
 2026-05-18 23:29:57,195 [WARNING] interpret_objective: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
 2026-05-18 23:29:57,195 [WARNING] interpret_objective second attempt: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
+2026-05-18 23:45:40,002 [WARNING] evaluate_trajectory: LLM evaluation failed: No valid JSON found in response text.
+2026-05-18 23:45:40,004 [WARNING] interpret_objective first attempt failed: No valid JSON found in response text.
+2026-05-18 23:45:40,004 [WARNING] interpret_objective: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
+2026-05-18 23:45:40,004 [WARNING] interpret_objective second attempt: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
