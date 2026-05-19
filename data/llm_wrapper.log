@@ -10,3 +10,11 @@
 2026-05-18 23:45:40,004 [WARNING] interpret_objective first attempt failed: No valid JSON found in response text.
 2026-05-18 23:45:40,004 [WARNING] interpret_objective: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
 2026-05-18 23:45:40,004 [WARNING] interpret_objective second attempt: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
+2026-05-18 23:53:42,064 [WARNING] evaluate_trajectory: LLM evaluation failed: No valid JSON found in response text.
+2026-05-18 23:53:42,065 [WARNING] interpret_objective first attempt failed: No valid JSON found in response text.
+2026-05-18 23:53:42,065 [WARNING] interpret_objective: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
+2026-05-18 23:53:42,066 [WARNING] interpret_objective second attempt: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
+2026-05-18 23:53:42,067 [WARNING] suggest_next_course: LLM suggestion failed: No valid JSON found in response text.
+2026-05-18 23:53:42,067 [INFO] suggest_next_course comparison: {'course_id': None, 'justification': 'LLM suggestion unavailable.', 'model_course_id': None, 'base_course_id': 'C2', 'match': False, 'available_courses': ['C2'], 'llm_response': {'choices': [{'message': {'content': 'No entiendo.'}}]}}
+2026-05-18 23:53:42,067 [WARNING] suggest_next_course: LLM suggestion failed: 'justificacion'
+2026-05-18 23:53:42,067 [INFO] suggest_next_course comparison: {'course_id': 'C2', 'justification': 'LLM suggestion unavailable.', 'model_course_id': 'C2', 'base_course_id': 'C2', 'match': True, 'available_courses': ['C2'], 'llm_response': {'choices': [{'message': {'content': '{"course_id": "C2", "justificacion": "Sigue la ruta necesaria."}'}}]}}

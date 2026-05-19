@@ -11,6 +11,7 @@ from src.problem_formalization import (
     compute_trajectory_cost,
     is_valid_trajectory,
     skills_after_sequence,
+    available_courses,
 )
 
 logger = logging.getLogger(__name__)
@@ -163,6 +164,100 @@ def evaluate_trajectory(
         "valid": valid,
         "coverage": coverage,
     }
+
+
+def _select_greedy_next_course(
+    available: List[Any],
+    acquired_skills: Set[str],
+    objective: Set[str],
+) -> Optional[str]:
+    best_course_id: Optional[str] = None
+    best_score = (-1, -1, float("inf"), float("inf"))
+    missing_target = objective - acquired_skills
+    for course in available:
+        new_skills = course.skills_granted - acquired_skills
+        primary = len(new_skills & missing_target)
+        secondary = len(new_skills)
+        score = (primary, secondary, -course.credits, -course.difficulty)
+        if score > best_score:
+            best_score = score
+            best_course_id = course.id
+    return best_course_id
+
+
+def _build_suggestion_prompt(objective: Set[str], available_courses_list: List[str]) -> str:
+    objective_str = ", ".join(sorted(objective))
+    course_list_str = ", ".join(available_courses_list)
+    return (
+        f"¿Qué curso recomendarías a continuación para alcanzar {objective_str}? "
+        f"Cursos disponibles: {course_list_str}. "
+        'Responde únicamente un JSON con {"course_id": "...", "justificacion": "..."}.',
+    )
+
+
+def _parse_suggestion_response(response: Dict[str, Any]) -> Dict[str, str]:
+    raw_text = _extract_text_from_response(response)
+    parsed = _parse_json_snippet(raw_text)
+    course_id = parsed.get("course_id")
+    justification = parsed.get("justificacion")
+    if not course_id or not justification:
+        raise ValueError("LLM suggestion missing course_id or justificacion.")
+    return {"course_id": str(course_id).strip(), "justification": str(justification).strip()}
+
+
+def suggest_next_course(
+    partial_trajectory: List[str],
+    instance: PlanningInstance,
+    objective: Set[str],
+) -> Dict[str, Any]:
+    acquired_skills = set(instance.initial_skills)
+    try:
+        acquired_skills = skills_after_sequence(partial_trajectory, instance, instance.initial_skills)
+    except Exception as exc:
+        logger.warning("suggest_next_course: invalid partial trajectory: %s", exc)
+
+    completed_courses = set(partial_trajectory)
+    available = available_courses(instance, acquired_skills, completed_courses)
+    available_ids = [course.id for course in available]
+    best_greedy = _select_greedy_next_course(available, acquired_skills, objective)
+
+    if not available_ids:
+        result = {
+            "course_id": None,
+            "justification": "No available courses remain.",
+            "model_course_id": None,
+            "base_course_id": best_greedy,
+            "match": best_greedy is None,
+            "available_courses": available_ids,
+            "llm_response": None,
+        }
+        logger.info("suggest_next_course result: %s", result)
+        return result
+
+    prompt = _build_suggestion_prompt(objective, [f"{c.id} ({c.name})" for c in available])
+    llm_response = None
+    suggestion: Dict[str, Optional[str]] = {"course_id": None, "justification": ""}
+    try:
+        llm_response = call_ollama(prompt)
+        parsed = _parse_suggestion_response(llm_response)
+        suggestion["course_id"] = parsed["course_id"]
+        suggestion["justification"] = parsed["justificacion"]
+    except Exception as exc:
+        logger.warning("suggest_next_course: LLM suggestion failed: %s", exc)
+        suggestion["justification"] = "LLM suggestion unavailable."
+
+    match = suggestion["course_id"] == best_greedy if suggestion["course_id"] is not None else False
+    result = {
+        "course_id": suggestion["course_id"],
+        "justification": suggestion["justification"],
+        "model_course_id": suggestion["course_id"],
+        "base_course_id": best_greedy,
+        "match": match,
+        "available_courses": available_ids,
+        "llm_response": llm_response,
+    }
+    logger.info("suggest_next_course comparison: %s", result)
+    return result
 
 
 def interpret_objective(text: str) -> Set[str]:
