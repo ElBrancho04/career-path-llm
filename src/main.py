@@ -84,6 +84,7 @@ def main() -> int:
         objective=objective_value,
         algorithm_name=args.algorithm,
         use_ollama=args.use_ollama,
+        instance_name=instance_path.name,
     )
 
     summarize_result(result)
