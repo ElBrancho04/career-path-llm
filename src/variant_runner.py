@@ -23,6 +23,22 @@ def select_algorithm(algorithm_name: str) -> Callable[[PlanningInstance], Dict[s
     return greedy_search
 
 
+def run_algorithm(
+    instance: PlanningInstance,
+    objective: Set[str],
+    algorithm_name: AlgorithmName = "greedy",
+) -> Dict[str, Any]:
+    algorithm = select_algorithm(algorithm_name)
+    if objective != instance.target_skills:
+        instance = PlanningInstance(
+            skills=set(instance.skills),
+            courses=instance.courses,
+            initial_skills=set(instance.initial_skills),
+            target_skills=set(objective),
+        )
+    return algorithm(instance)
+
+
 def _build_common_result(
     trajectory: Optional[list],
     total_cost: int,
@@ -59,9 +75,8 @@ def run_base_variant(
     objective: Set[str],
     algorithm_name: AlgorithmName = "greedy",
 ) -> VariantResult:
-    algorithm = select_algorithm(algorithm_name)
     start_time = time.perf_counter()
-    search_result = algorithm(instance)
+    search_result = run_algorithm(instance, objective, algorithm_name)
     elapsed_time = time.perf_counter() - start_time
     return _build_common_result(
         trajectory=search_result.get("trajectory"),
