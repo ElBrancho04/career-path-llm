@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import pandas as pd
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -67,6 +68,35 @@ def normalize_objective(variant: str, objective_text: str) -> Any:
     return set(map(str.strip, objective_text.split(",")))
 
 
+def get_objective_for_variant(instance: Any, variant: str) -> Any:
+    if variant == "B":
+        return "Learn skills: " + ", ".join(sorted(instance.target_skills))
+    return set(instance.target_skills)
+
+
+def _run_variant_with_optional_seed(
+    variant: str,
+    instance: Any,
+    objective_value: Any,
+    algorithm: str,
+    use_ollama: bool,
+    instance_name: str,
+    seed: int,
+) -> Dict[str, Any]:
+    signature = inspect.signature(run_variant)
+    kwargs = {
+        "variant": variant,
+        "instance": instance,
+        "objective": objective_value,
+        "algorithm_name": algorithm,
+        "use_ollama": use_ollama,
+        "instance_name": instance_name,
+    }
+    if "seed" in signature.parameters:
+        kwargs["seed"] = seed
+    return run_variant(**kwargs)
+
+
 def run_single_execution(
     instance_path: str,
     variant: str,
@@ -77,13 +107,14 @@ def run_single_execution(
     """Run a single execution of the variant on the given instance."""
     instance = load_instance_from_file(Path(instance_path))
     use_ollama = variant in {"B", "C", "D"}
-    result = run_variant(
+    result = _run_variant_with_optional_seed(
         variant,
         instance,
         objective_value,
-        algorithm_name=algorithm,
-        use_ollama=use_ollama,
-        instance_name=Path(instance_path).name,
+        algorithm,
+        use_ollama,
+        Path(instance_path).name,
+        seed,
     )
     return {
         "instance_path": instance_path,
@@ -149,8 +180,33 @@ def build_result_row(
     }
 
 
+def run_experiment_repetitions() -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    catalog = build_instance_catalog()
+    for entry in catalog:
+        instance_path = entry["path"]
+        instance_size = entry["size"]
+        instance = load_instance_from_file(Path(instance_path))
+        for variant in VARIANTS:
+            objective_value = get_objective_for_variant(instance, variant)
+            for algorithm in ALGORITHMS:
+                for run_number, seed in enumerate(SEEDS, start=1):
+                    execution = run_single_execution(
+                        instance_path,
+                        variant,
+                        algorithm,
+                        objective_value,
+                        seed,
+                    )
+                    rows.append(build_result_row(execution, instance_size, run_number))
+    return rows
+
+
 if __name__ == "__main__":
     verify_instance_selection()
     catalog = build_instance_catalog()
     print(f"Verified {len(catalog)} fixed phase 6 instances.")
     print("First instance entry:", catalog[0])
+    print("Building experimental rows for reproducibility...")
+    rows = run_experiment_repetitions()
+    print(f"Prepared {len(rows)} experiment rows.")
