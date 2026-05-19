@@ -9,6 +9,7 @@ from src.variant_runner import load_instance_from_file, run_variant
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 INSTANCES_DIR = ROOT_DIR / "data" / "instances"
+RESULTS_DIR = ROOT_DIR / "results"
 
 VARIANTS = ["A", "B", "C", "D"]
 ALGORITHMS = ["greedy", "a_star"]
@@ -202,6 +203,17 @@ def run_experiment_repetitions() -> List[Dict[str, Any]]:
     return rows
 
 
+def save_experiment_results(rows: List[Dict[str, Any]]) -> None:
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    dataframe = pd.DataFrame(rows)
+    dataframe.to_csv(CSV_OUTPUT_PATH, index=False)
+    dataframe.to_json(JSON_OUTPUT_PATH, orient="records", indent=2)
+
+
+CSV_OUTPUT_PATH = RESULTS_DIR / "experiment_results.csv"
+JSON_OUTPUT_PATH = RESULTS_DIR / "experiment_results.json"
+
+
 if __name__ == "__main__":
     verify_instance_selection()
     catalog = build_instance_catalog()
@@ -210,3 +222,5 @@ if __name__ == "__main__":
     print("Building experimental rows for reproducibility...")
     rows = run_experiment_repetitions()
     print(f"Prepared {len(rows)} experiment rows.")
+    save_experiment_results(rows)
+    print(f"Saved results to {CSV_OUTPUT_PATH} and {JSON_OUTPUT_PATH}.")
