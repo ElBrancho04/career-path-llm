@@ -194,10 +194,9 @@ def run_guided_variant(
         suggestion = suggest_next_course(trajectory, instance, objective)
         chosen_course_id = suggestion.get("course_id")
         source = "llm"
-        if chosen_course_id not in {course.id for course in candidates}:
-            fallback_result = run_algorithm(instance, objective, algorithm_name)
-            fallback_trajectory = fallback_result.get("trajectory") or []
-            chosen_course_id = fallback_trajectory[0] if fallback_trajectory else None
+        candidate_ids = {course.id for course in candidates}
+        if chosen_course_id not in candidate_ids:
+            chosen_course_id = next(iter(candidate_ids), None)
             source = "fallback"
             suggestion["justification"] = suggestion.get("justification") or "LLM failed; using fallback."
 

@@ -18,3 +18,39 @@
 2026-05-18 23:53:42,067 [INFO] suggest_next_course comparison: {'course_id': None, 'justification': 'LLM suggestion unavailable.', 'model_course_id': None, 'base_course_id': 'C2', 'match': False, 'available_courses': ['C2'], 'llm_response': {'choices': [{'message': {'content': 'No entiendo.'}}]}}
 2026-05-18 23:53:42,067 [WARNING] suggest_next_course: LLM suggestion failed: 'justificacion'
 2026-05-18 23:53:42,067 [INFO] suggest_next_course comparison: {'course_id': 'C2', 'justification': 'LLM suggestion unavailable.', 'model_course_id': 'C2', 'base_course_id': 'C2', 'match': True, 'available_courses': ['C2'], 'llm_response': {'choices': [{'message': {'content': '{"course_id": "C2", "justificacion": "Sigue la ruta necesaria."}'}}]}}
+2026-05-19 01:38:46,772 [INFO] Running base variant: algorithm=greedy instance=test_instance.json
+2026-05-19 01:38:46,824 [INFO] Base variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0001
+2026-05-19 01:38:46,826 [INFO] Running interpret variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:38:46,826 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-19 01:38:46,827 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-19 01:38:46,827 [INFO] Interpret variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0000
+2026-05-19 01:38:46,828 [INFO] Running evaluate variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:38:46,829 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-19 01:38:46,829 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-19 01:38:46,830 [INFO] Evaluate variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0000
+2026-05-19 01:38:46,831 [INFO] Running guided variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:38:46,833 [INFO] Guided variant completed: instance=test_instance.json algo=greedy success=False num_courses=1 llm_calls=2 elapsed_time=0.0003
+2026-05-19 01:40:15,277 [INFO] Running base variant: algorithm=greedy instance=test_instance.json
+2026-05-19 01:40:15,278 [INFO] Base variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-19 01:40:15,279 [INFO] Running interpret variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:40:15,279 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-19 01:40:15,279 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0001
+2026-05-19 01:40:15,280 [INFO] Interpret variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0001
+2026-05-19 01:40:15,280 [INFO] Running evaluate variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:40:15,281 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-19 01:40:15,281 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-19 01:40:15,281 [INFO] Evaluate variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0000
+2026-05-19 01:40:15,283 [INFO] Running guided variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:40:15,283 [INFO] Guided variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=2 elapsed_time=0.0001
+2026-05-19 01:43:56,449 [INFO] Running base variant: algorithm=greedy instance=test_instance.json
+2026-05-19 01:43:56,450 [INFO] Base variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-19 01:43:56,451 [INFO] Running interpret variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:43:56,451 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-19 01:43:56,451 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-19 01:43:56,452 [INFO] Interpret variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0000
+2026-05-19 01:43:56,452 [INFO] Running evaluate variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:43:56,452 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-19 01:43:56,453 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-19 01:43:56,453 [INFO] Evaluate variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0000
+2026-05-19 01:43:56,454 [INFO] Running guided variant: instance=test_instance.json algorithm=greedy
+2026-05-19 01:43:56,455 [INFO] Guided variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=2 elapsed_time=0.0001
