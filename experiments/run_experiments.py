@@ -112,6 +112,43 @@ def verify_instance_selection() -> None:
         )
 
 
+def get_variant_type(variant: str) -> str:
+    if variant == "A":
+        return "oracle"
+    if variant == "B":
+        return "auto"
+    if variant in {"C", "D"}:
+        return "guided"
+    return "unknown"
+
+
+def build_result_row(
+    execution: Dict[str, Any],
+    instance_size: str,
+    run_number: int,
+) -> Dict[str, Any]:
+    result = execution["result"]
+    trajectory = result.get("trajectory")
+    llm_evaluation = result.get("llm_evaluation", {}) or {}
+    return {
+        "instance": Path(execution["instance_path"]).name,
+        "instance_size": instance_size,
+        "variant": execution["variant"],
+        "algorithm": execution["algorithm"],
+        "seed": execution["seed"],
+        "run": run_number,
+        "success": 1 if result.get("success") else 0,
+        "total_cost": result.get("total_cost"),
+        "num_courses": result.get("num_courses"),
+        "elapsed_time": result.get("elapsed_time"),
+        "llm_calls": result.get("llm_calls", 0),
+        "llm_evaluation_score": llm_evaluation.get("score"),
+        "llm_evaluation_nota": llm_evaluation.get("nota"),
+        "trajectory_found": 0 if trajectory is None else 1,
+        "variant_type": get_variant_type(execution["variant"]),
+    }
+
+
 if __name__ == "__main__":
     verify_instance_selection()
     catalog = build_instance_catalog()
