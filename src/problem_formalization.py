@@ -177,19 +177,24 @@ def example_instance() -> PlanningInstance:
 
 
 def load_instance_from_dict(data: Dict[str, object]) -> PlanningInstance:
-    courses = {
-        course_data["id"]: Course(
-            id=course_data["id"],
-            name=course_data["name"],
+    courses: Dict[CourseId, Course] = {}
+    for course_data in data.get("courses", []):
+        course_id = course_data.get("id")
+        if not course_id:
+            raise ValueError(
+                f"Course entry is missing required field 'id': {course_data}"
+            )
+        course_name = course_data.get("name", course_id)
+        courses[course_id] = Course(
+            id=course_id,
+            name=course_name,
             skills_granted=set(course_data.get("skills_granted", [])),
             skills_required=set(course_data.get("skills_required", [])),
             prerequisites=set(course_data.get("prerequisites", [])),
-            credits=int(course_data.get("credits", 0)),
+            credits=int(course_data.get("credits", 1)),
             difficulty=float(course_data.get("difficulty", 1.0)),
             description=course_data.get("description"),
         )
-        for course_data in data.get("courses", [])
-    }
 
     return PlanningInstance(
         skills=set(data.get("skills", [])),

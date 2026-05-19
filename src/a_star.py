@@ -6,6 +6,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 from src.problem_formalization import (
     PlanningInstance,
+    Course,
     compute_trajectory_cost,
     is_course_available,
     skills_after_sequence,
@@ -20,7 +21,7 @@ def _available_courses(
     instance: PlanningInstance,
     acquired_skills: Set[str],
     completed_courses: Set[str],
-) -> List[Tuple[str, int]]:
+) -> List[Course]:
     return [
         course
         for course in instance.courses.values()
@@ -43,6 +44,8 @@ def _heuristic_missing_courses(
         if course.id not in completed_courses
     ]
 
+    min_credits = min((c.credits for c in instance.courses.values()), default=1)
+
     remaining = set(missing_skills)
     steps = 0
     while remaining:
@@ -52,10 +55,10 @@ def _heuristic_missing_courses(
             default=None,
         )
         if best_course is None or not (best_course.skills_granted & remaining):
-            return len(remaining)
+            return len(remaining) * min_credits
         remaining -= best_course.skills_granted
         steps += 1
-    return steps
+    return steps * min_credits
 
 
 def a_star_search(

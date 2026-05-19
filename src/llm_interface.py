@@ -93,7 +93,7 @@ def _build_evaluate_prompt(objective: Set[str], trajectory: List[str], instance:
     return (
         f"Evalúa la siguiente secuencia de cursos para alcanzar el objetivo {objective_str}. "
         f"Cursos: {course_list}. "
-        'Devuelve únicamente un JSON: {"nota": float, "justificacion": "..."}.',
+        'Devuelve únicamente un JSON: {"nota": float, "justificacion": "..."}.'
     )
 
 
@@ -191,7 +191,7 @@ def _build_suggestion_prompt(objective: Set[str], available_courses_list: List[s
     return (
         f"¿Qué curso recomendarías a continuación para alcanzar {objective_str}? "
         f"Cursos disponibles: {course_list_str}. "
-        'Responde únicamente un JSON con {"course_id": "...", "justificacion": "..."}.',
+        'Responde únicamente un JSON con {"course_id": "...", "justificacion": "..."}.'
     )
 
 
@@ -241,7 +241,7 @@ def suggest_next_course(
         llm_response = call_ollama(prompt)
         parsed = _parse_suggestion_response(llm_response)
         suggestion["course_id"] = parsed["course_id"]
-        suggestion["justification"] = parsed["justificacion"]
+        suggestion["justification"] = parsed["justification"]
     except Exception as exc:
         logger.warning("suggest_next_course: LLM suggestion failed: %s", exc)
         suggestion["justification"] = "LLM suggestion unavailable."

@@ -89,12 +89,20 @@ def generate_instance(seed: int, parameters: GeneratorParameters) -> Dict[str, A
             if candidate_courses:
                 course_prerequisites.add(rng.choice(candidate_courses))
 
-        # Add extra random prerequisites for density control
+
         if idx > 1:
             previous_courses = course_ids[: idx - 1]
-            for prev_course in previous_courses:
+            for prev_course_id in previous_courses:
                 if rng.random() < parameters.prereq_density:
-                    course_prerequisites.add(prev_course)
+                    prev_course_entry = next(
+                        (c for c in courses if c["id"] == prev_course_id), None
+                    )
+                    if prev_course_entry:
+                        course_prerequisites.add(prev_course_id)
+                        prev_skills = set(prev_course_entry.get("skills_granted", []))
+                        addable = prev_skills - course_required_skills
+                        if addable:
+                            course_required_skills.add(rng.choice(sorted(addable)))
 
         credits = rng.randint(2, parameters.max_credits)
         difficulty = round(rng.uniform(1.0, parameters.max_difficulty), 1)
@@ -146,7 +154,12 @@ def generate_synthetic_instances(output_folder: Path) -> None:
             density = densities[(repeat - 1) % len(densities)]
             target_size = target_options[(repeat - 1) % len(target_options)]
             params = GeneratorParameters(
-                num_skills=max(num_courses // 1, 10),
+                # CAMBIO 4: corregido num_courses // 1 (no-op) por num_courses // 5.
+                # Antes: para 100 cursos se generaban 100 habilidades, produciendo
+                # instancias extremadamente dispersas sin estructura real.
+                # Ahora: para 100 cursos se generan 20 habilidades, consistente con
+                # DEFAULT_SKILL_NAMES y con los perfiles de tamaño pequeño y mediano.
+                num_skills=max(num_courses // 5, 10),
                 num_courses=num_courses,
                 prereq_density=density,
                 target_skill_size=target_size,
