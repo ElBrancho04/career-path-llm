@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 
+from src.llm_wrapper import check_ollama_available
 from src.variant_runner import load_instance_from_file, run_variant
 
 INSTANCES_DIR = ROOT_DIR / "data" / "instances"
@@ -304,13 +305,35 @@ CSV_OUTPUT_PATH = RESULTS_DIR / "experiment_results.csv"
 JSON_OUTPUT_PATH = RESULTS_DIR / "experiment_results.json"
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description=(
-            "Generate experiment rows comparing variants A/B/C/D over the fixed Phase 6 instances. "
-            "Use --smoke to validate the pipeline quickly (recommended)."
-        )
+def assert_ollama_or_skip_llm_variants(variants: List[str]) -> List[str]:
+    """Si Ollama no está disponible, elimina las variantes que lo requieren.
+
+    Imprime un aviso claro en lugar de fallar silenciosamente 1200 veces.
+    Devuelve la lista de variantes que sí pueden ejecutarse.
+    """
+    llm_variants = {"B", "C", "D"}
+    needs_llm = any(v in llm_variants for v in variants)
+
+    if not needs_llm:
+        return variants
+
+    print("Verificando disponibilidad de Ollama...")
+    if check_ollama_available():
+        print("  Ollama disponible. Se ejecutarán todas las variantes.")
+        return variants
+
+    print(
+        "  AVISO: Ollama no está disponible o el modelo no está descargado.\n"
+        "  Las variantes B, C, D requieren Ollama y serán omitidas.\n"
+        "  Para activarlas: asegúrate de que Ollama esté corriendo con:\n"
+        "    ollama serve\n"
+        "    ollama pull qwen2.5:3b\n"
+        "  y vuelve a ejecutar el script."
     )
+    return [v for v in variants if v not in llm_variants]
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(...)
     parser.add_argument(
         "--smoke",
         action="store_true",
@@ -320,21 +343,17 @@ if __name__ == "__main__":
 
     verify_instance_selection()
 
+    active_variants = assert_ollama_or_skip_llm_variants(VARIANTS)
+
     if args.smoke:
         catalog = build_smoke_instance_catalog()
         seeds = [SEEDS[0]]
-        print("Running SMOKE subset (Phase 6 Bloque 8):")
-        print(f"  instances={len(catalog)} (small/medium/large/manual)")
-        print(f"  variants={VARIANTS}")
-        print(f"  algorithms={ALGORITHMS}")
-        print(f"  seeds={seeds}")
-        rows = run_experiment_repetitions_for_catalog(catalog, VARIANTS, ALGORITHMS, seeds)
+        print(f"Running SMOKE subset: {len(catalog)} instancias, variantes={active_variants}")
+        rows = run_experiment_repetitions_for_catalog(catalog, active_variants, ALGORITHMS, seeds)
     else:
         catalog = build_instance_catalog()
-        print(f"Verified {len(catalog)} fixed phase 6 instances.")
-        print("First instance entry:", catalog[0])
-        print("Building experimental rows for reproducibility...")
-        rows = run_experiment_repetitions_for_catalog(catalog, VARIANTS, ALGORITHMS, SEEDS)
+        print(f"Verified {len(catalog)} instances. Variantes activas: {active_variants}")
+        rows = run_experiment_repetitions_for_catalog(catalog, active_variants, ALGORITHMS, SEEDS)
 
     print(f"Prepared {len(rows)} experiment rows.")
     save_experiment_results(rows)

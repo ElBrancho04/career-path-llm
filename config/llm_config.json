@@ -1,8 +1,10 @@
 {
   "model": "qwen2.5:3b",
   "temperature": 0.1,
-  "max_tokens": 256,
+  "max_tokens": 512,
   "endpoint_local": "http://localhost:11434",
+  "request_timeout": 120,
+  "max_retries": 1,
   "roles": [
     "interpret-objective",
     "evaluate-trajectory",

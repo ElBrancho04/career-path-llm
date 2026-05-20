@@ -15,7 +15,14 @@ CACHE_PATH = PROJECT_ROOT / "data" / "llm_cache.json"
 LOG_PATH = PROJECT_ROOT / "data" / "llm_wrapper.log"
 
 LOGGING_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
-logging.basicConfig(level=logging.INFO, format=LOGGING_FORMAT, handlers=[logging.FileHandler(LOG_PATH, encoding="utf-8"), logging.StreamHandler()])
+logging.basicConfig(
+    level=logging.INFO,
+    format=LOGGING_FORMAT,
+    handlers=[
+        logging.FileHandler(LOG_PATH, encoding="utf-8"),
+        logging.StreamHandler(),
+    ],
+)
 logger = logging.getLogger(__name__)
 
 
@@ -69,27 +76,90 @@ def _build_payload(prompt: str, stop: Optional[List[str]], config: Dict[str, Any
         "model": config["model"],
         "temperature": config.get("temperature", 0.0),
         "max_tokens": config.get("max_tokens", 256),
+        "prompt": prompt,
     }
     if stop is not None:
         payload["stop"] = stop
-
-    # Ollama supports both prompt and messages depending on model interface.
-    payload["prompt"] = prompt
     return payload
 
 
-def _send_request(endpoint: str, payload: Dict[str, Any], timeout: float = 15.0) -> Dict[str, Any]:
+def _send_request(endpoint: str, payload: Dict[str, Any], timeout: float) -> Dict[str, Any]:
     url = endpoint.rstrip("/") + "/v1/completions"
     response = requests.post(url, json=payload, timeout=timeout)
     response.raise_for_status()
     return response.json()
 
 
-def call_ollama(prompt: str, stop: Optional[List[str]] = None, max_retries: int = 3, backoff_base: float = 1.0) -> Dict[str, Any]:
+def _coerce_float(value: Any, default: float) -> float:
+    try:
+        if value is None:
+            return default
+        coerced = float(value)
+        if coerced <= 0:
+            return default
+        return coerced
+    except (TypeError, ValueError):
+        return default
+
+
+def _coerce_int(value: Any, default: int, *, minimum: int = 1) -> int:
+    try:
+        if value is None:
+            return default
+        coerced = int(value)
+        if coerced < minimum:
+            return default
+        return coerced
+    except (TypeError, ValueError):
+        return default
+
+
+def check_ollama_available(timeout: float = 4.0) -> bool:
+    """Verifica rápidamente si Ollama está corriendo y responde.
+
+    Hace un GET al endpoint raíz. Si responde en menos de `timeout` segundos,
+    Ollama está disponible. Usar antes de lanzar el experimento completo para
+    fallar rápido en lugar de repetir errores durante horas.
+    """
+    try:
+        config = load_llm_config()
+        endpoint = config.get("endpoint_local", "http://localhost:11434")
+        response = requests.get(endpoint.rstrip("/") + "/api/tags", timeout=timeout)
+        if response.status_code == 200:
+            data = response.json()
+            model_name = config.get("model", "")
+            available_models = [m.get("name", "") for m in data.get("models", [])]
+            if not any(model_name in m for m in available_models):
+                logger.warning(
+                    "Ollama está corriendo pero el modelo '%s' no está descargado. "
+                    "Ejecuta: ollama pull %s",
+                    model_name, model_name,
+                )
+                return False
+            return True
+        return False
+    except Exception as exc:
+        logger.warning("Ollama no disponible: %s", exc)
+        return False
+
+
+def call_ollama(
+    prompt: str,
+    stop: Optional[List[str]] = None,
+    max_retries: Optional[int] = None,
+    backoff_base: Optional[float] = None,
+) -> Dict[str, Any]:
     config = load_llm_config()
     endpoint = config.get("endpoint_local")
     if not endpoint:
         raise ValueError("LLM config must specify endpoint_local")
+
+    request_timeout = _coerce_float(config.get("request_timeout"), 8.0)
+    resolved_max_retries = _coerce_int(max_retries if max_retries is not None else config.get("max_retries"), 2)
+    resolved_backoff_base = _coerce_float(
+        backoff_base if backoff_base is not None else config.get("backoff_base"),
+        0.5,
+    )
 
     cache = load_cache()
     cache_key = _make_cache_key(prompt, stop, config)
@@ -99,19 +169,19 @@ def call_ollama(prompt: str, stop: Optional[List[str]] = None, max_retries: int 
 
     payload = _build_payload(prompt, stop, config)
     last_exception: Optional[Exception] = None
-    for attempt in range(1, max_retries + 1):
+    for attempt in range(1, resolved_max_retries + 1):
         try:
-            logger.info("Calling Ollama (attempt %d) with prompt: %s", attempt, prompt)
-            response = _send_request(endpoint, payload)
+            logger.info("Calling Ollama (attempt %d)", attempt)
+            response = _send_request(endpoint, payload, timeout=request_timeout)
             cache[cache_key] = response
             save_cache(cache)
             logger.info("Ollama response cached successfully.")
             return response
         except requests.RequestException as exc:
             last_exception = exc
-            wait = backoff_base * (2 ** (attempt - 1))
+            wait = resolved_backoff_base * (2 ** (attempt - 1))
             logger.warning("Ollama request failed on attempt %d: %s", attempt, exc)
-            if attempt < max_retries:
+            if attempt < resolved_max_retries:
                 logger.info("Retrying after %.1f seconds...", wait)
                 time.sleep(wait)
         except ValueError as exc:
@@ -119,7 +189,7 @@ def call_ollama(prompt: str, stop: Optional[List[str]] = None, max_retries: int 
             logger.error("Invalid response from Ollama: %s", exc)
             break
 
-    error_message = f"Failed to call Ollama after {max_retries} attempts."
+    error_message = f"Failed to call Ollama after {resolved_max_retries} attempts."
     logger.error(error_message)
     if last_exception:
         logger.exception(last_exception)
