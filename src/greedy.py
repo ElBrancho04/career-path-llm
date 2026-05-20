@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 import time
 from typing import Dict, List, Optional, Set
 
@@ -12,6 +13,7 @@ from src.problem_formalization import (
 
 def greedy_search(
     instance: PlanningInstance,
+    rng: Optional[random.Random] = None,
 ) -> Dict[str, Optional[object]]:
     """Greedy baseline solver for professional trajectory planning.
 
@@ -34,6 +36,7 @@ def greedy_search(
         missing_target = instance.target_skills - acquired_skills
         best_course = None
         best_score = (-1, -1, float("inf"), float("inf"))
+        tied_courses: List[object] = []
 
         for course in candidates:
             new_skills = course.skills_granted - acquired_skills
@@ -43,6 +46,12 @@ def greedy_search(
             if score > best_score:
                 best_score = score
                 best_course = course
+                tied_courses = [course]
+            elif score == best_score:
+                tied_courses.append(course)
+
+        if tied_courses and rng is not None and len(tied_courses) > 1:
+            best_course = rng.choice(tied_courses)
 
         if best_course is None:
             break

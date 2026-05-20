@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import random
 import time
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Set
@@ -34,6 +35,7 @@ def run_algorithm(
     instance: PlanningInstance,
     objective: Set[str],
     algorithm_name: AlgorithmName = "greedy",
+    rng: Optional[random.Random] = None,
 ) -> Dict[str, Any]:
     algorithm = select_algorithm(algorithm_name)
     if objective != instance.target_skills:
@@ -43,7 +45,11 @@ def run_algorithm(
             initial_skills=set(instance.initial_skills),
             target_skills=set(objective),
         )
-    return algorithm(instance)
+    try:
+        return algorithm(instance, rng=rng)
+    except TypeError:
+        # Backwards compatibility for algorithms that don't accept rng.
+        return algorithm(instance)
 
 
 def _build_common_result(
@@ -82,10 +88,11 @@ def run_base_variant(
     objective: Set[str],
     algorithm_name: AlgorithmName = "greedy",
     instance_name: Optional[str] = None,
+    rng: Optional[random.Random] = None,
 ) -> VariantResult:
     logger.info("Running base variant: algorithm=%s instance=%s", algorithm_name, instance_name or "unknown")
     start_time = time.perf_counter()
-    search_result = run_algorithm(instance, objective, algorithm_name)
+    search_result = run_algorithm(instance, objective, algorithm_name, rng=rng)
     elapsed_time = time.perf_counter() - start_time
     logger.info(
         "Base variant completed: instance=%s algo=%s success=%s num_courses=%s llm_calls=0 elapsed_time=%.4f",
@@ -111,12 +118,13 @@ def run_interpret_variant(
     algorithm_name: AlgorithmName = "greedy",
     use_ollama: bool = True,
     instance_name: Optional[str] = None,
+    rng: Optional[random.Random] = None,
 ) -> VariantResult:
     if not use_ollama:
         raise ValueError("interpret variant requires Ollama enabled.")
     logger.info("Running interpret variant: instance=%s algorithm=%s", instance_name or "unknown", algorithm_name)
     interpreted_objective = interpret_objective(objective_text)
-    base_result = run_base_variant(instance, interpreted_objective, algorithm_name)
+    base_result = run_base_variant(instance, interpreted_objective, algorithm_name, rng=rng)
     base_result["llm_calls"] = 1
     base_result["interpreted_objective"] = sorted(interpreted_objective)
     logger.info(
@@ -136,11 +144,12 @@ def run_evaluate_variant(
     algorithm_name: AlgorithmName = "greedy",
     use_ollama: bool = True,
     instance_name: Optional[str] = None,
+    rng: Optional[random.Random] = None,
 ) -> VariantResult:
     if not use_ollama:
         raise ValueError("evaluate variant requires Ollama enabled.")
     logger.info("Running evaluate variant: instance=%s algorithm=%s", instance_name or "unknown", algorithm_name)
-    base_result = run_base_variant(instance, objective, algorithm_name)
+    base_result = run_base_variant(instance, objective, algorithm_name, rng=rng)
     try:
         llm_eval = evaluate_trajectory(base_result["trajectory"] or [], instance, objective)
     except Exception as exc:
@@ -173,6 +182,7 @@ def run_guided_variant(
     algorithm_name: AlgorithmName = "greedy",
     use_ollama: bool = True,
     instance_name: Optional[str] = None,
+    rng: Optional[random.Random] = None,
 ) -> VariantResult:
     if not use_ollama:
         raise ValueError("guided variant requires Ollama enabled.")
@@ -187,6 +197,8 @@ def run_guided_variant(
 
     while not objective.issubset(acquired_skills):
         candidates = available_courses(instance, acquired_skills, completed_courses)
+        if rng is not None:
+            rng.shuffle(candidates)
         if not candidates:
             break
 
@@ -258,23 +270,25 @@ def run_variant(
     algorithm_name: AlgorithmName = "greedy",
     use_ollama: bool = False,
     instance_name: Optional[str] = None,
+    seed: Optional[int] = None,
 ) -> VariantResult:
+    rng = random.Random(seed) if seed is not None else None
     if variant == "A" or variant == "base":
         if not isinstance(objective, set):
             raise ValueError("Variant A requires a set of objective skills.")
-        return run_base_variant(instance, objective, algorithm_name, instance_name=instance_name)
+        return run_base_variant(instance, objective, algorithm_name, instance_name=instance_name, rng=rng)
     if variant == "B" or variant == "interpret":
         if not isinstance(objective, str):
             raise ValueError("Variant B requires a natural language objective string.")
-        return run_interpret_variant(instance, objective, algorithm_name, use_ollama, instance_name=instance_name)
+        return run_interpret_variant(instance, objective, algorithm_name, use_ollama, instance_name=instance_name, rng=rng)
     if variant == "C" or variant == "evaluate":
         if not isinstance(objective, set):
             raise ValueError("Variant C requires a set of objective skills.")
-        return run_evaluate_variant(instance, objective, algorithm_name, use_ollama, instance_name=instance_name)
+        return run_evaluate_variant(instance, objective, algorithm_name, use_ollama, instance_name=instance_name, rng=rng)
     if variant == "D" or variant == "guided":
         if not isinstance(objective, set):
             raise ValueError("Variant D requires a set of objective skills.")
-        return run_guided_variant(instance, objective, algorithm_name, use_ollama, instance_name=instance_name)
+        return run_guided_variant(instance, objective, algorithm_name, use_ollama, instance_name=instance_name, rng=rng)
     raise ValueError(f"Unknown variant '{variant}'. Choose A, B, C or D.")
 
 

@@ -110,6 +110,71 @@ class TestVariantRunner(unittest.TestCase):
         self.assertIn("llm_step_log", result)
         self.assertEqual(result["llm_step_log"][0]["source"], "llm")
 
+    class TestSeedsAffectRuns(unittest.TestCase):
+        def test_seed_affects_greedy_tie_break(self):
+            """Different seeds should be able to produce different (but valid) greedy solutions.
+
+            We build a tiny instance where multiple available courses are equally good
+            for the first step (same score), so the new seed-controlled tie-breaking
+            can change which course is chosen.
+            """
+            from src.problem_formalization import Course, PlanningInstance
+            from src.variant_runner import run_variant
+
+            instance = PlanningInstance(
+                skills={"A"},
+                courses={
+                    "C1": Course(
+                        id="C1",
+                        name="Course 1",
+                        skills_granted={"A"},
+                        skills_required=set(),
+                        prerequisites=set(),
+                        credits=3,
+                        difficulty=1.0,
+                    ),
+                    "C2": Course(
+                        id="C2",
+                        name="Course 2",
+                        skills_granted={"A"},
+                        skills_required=set(),
+                        prerequisites=set(),
+                        credits=3,
+                        difficulty=1.0,
+                    ),
+                },
+                initial_skills=set(),
+                target_skills={"A"},
+            )
+
+            result_seed_1 = run_variant(
+                variant="A",
+                instance=instance,
+                objective={"A"},
+                algorithm_name="greedy",
+                seed=1,
+            )
+            result_seed_1_repeat = run_variant(
+                variant="A",
+                instance=instance,
+                objective={"A"},
+                algorithm_name="greedy",
+                seed=1,
+            )
+            result_seed_2 = run_variant(
+                variant="A",
+                instance=instance,
+                objective={"A"},
+                algorithm_name="greedy",
+                seed=2,
+            )
+
+            # Same seed => deterministic
+            self.assertEqual(result_seed_1.get("trajectory"), result_seed_1_repeat.get("trajectory"))
+
+            # Different seeds => may differ. We assert "not always equal" by checking
+            # we can observe a difference on this symmetric instance.
+            self.assertNotEqual(result_seed_1.get("trajectory"), result_seed_2.get("trajectory"))
 
 if __name__ == "__main__":
     unittest.main()

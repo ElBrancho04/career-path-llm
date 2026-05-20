@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import heapq
+import random
 import time
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -64,6 +65,7 @@ def _heuristic_missing_courses(
 def a_star_search(
     instance: PlanningInstance,
     max_iterations: int = 200000,
+    rng: Optional[random.Random] = None,
 ) -> Dict[str, Optional[object]]:
     """A* search for a trajectory that reaches the target skills.
 
@@ -85,15 +87,18 @@ def a_star_search(
         }
 
     start_h = _heuristic_missing_courses(instance, initial_skills, set())
-    frontier: List[Tuple[int, int, frozenset[str], List[str]]] = [
-        (start_h, 0, start_state, [])
+    # Add a tie-breaker component so that expansions can vary across seeds
+    # while remaining deterministic for a fixed seed.
+    start_tie = rng.random() if rng is not None else 0.0
+    frontier: List[Tuple[float, int, int, frozenset[str], List[str]]] = [
+        (float(start_h) + start_tie, start_h, 0, start_state, [])
     ]
     best_cost: Dict[frozenset[str], int] = {start_state: 0}
     iterations = 0
 
     while frontier and iterations < max_iterations:
         iterations += 1
-        f, g, state, trajectory = heapq.heappop(frontier)
+        _, f, g, state, trajectory = heapq.heappop(frontier)
         if best_cost.get(state, float("inf")) < g:
             continue
 
@@ -122,9 +127,10 @@ def a_star_search(
             next_h = _heuristic_missing_courses(instance, next_acquired_skills, next_completed)
             next_f = next_g + next_h
             next_trajectory = trajectory + [course.id]
+            tie = rng.random() if rng is not None else 0.0
 
             best_cost[next_state] = next_g
-            heapq.heappush(frontier, (next_f, next_g, next_state, next_trajectory))
+            heapq.heappush(frontier, (float(next_f) + tie, next_f, next_g, next_state, next_trajectory))
 
     elapsed_time = time.perf_counter() - start_time
     return {
