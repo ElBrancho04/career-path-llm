@@ -4,3 +4,6 @@ __pycache__/
 results/
 *.sqlite
 .DS_Store
+.github/
+data/llm_cache.json
+data/llm_wrapper.log

@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import argparse
 import inspect
+import sys
 import pandas as pd
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))
+
 from src.variant_runner import load_instance_from_file, run_variant
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
 INSTANCES_DIR = ROOT_DIR / "data" / "instances"
 RESULTS_DIR = ROOT_DIR / "results"
 
@@ -60,6 +64,26 @@ def build_instance_catalog() -> List[Dict[str, str]]:
             raise FileNotFoundError(f"Required instance file not found: {path}")
         instance_files.append({"path": str(path), "size": get_instance_size(path)})
     return instance_files
+
+
+def build_smoke_instance_catalog() -> List[Dict[str, str]]:
+    """Return a tiny 4-instance catalog (1 per size) for fast validation.
+
+    This supports Phase 6 (Bloque 8): run a reduced subset before launching the
+    full experiment matrix.
+    """
+    candidates = [
+        INSTANCES_DIR / SMALL_INSTANCES[0],
+        INSTANCES_DIR / MEDIUM_INSTANCES[0],
+        INSTANCES_DIR / LARGE_INSTANCES[0],
+        INSTANCES_DIR / MANUAL_INSTANCES[0],
+    ]
+    catalog: List[Dict[str, str]] = []
+    for path in candidates:
+        if not path.exists():
+            raise FileNotFoundError(f"Smoke test instance not found: {path}")
+        catalog.append({"path": str(path), "size": get_instance_size(path)})
+    return catalog
 
 
 def normalize_objective(variant: str, objective_text: str) -> Any:
@@ -222,16 +246,29 @@ def build_result_row(
 
 
 def run_experiment_repetitions() -> List[Dict[str, Any]]:
-    rows: List[Dict[str, Any]] = []
     catalog = build_instance_catalog()
+    return run_experiment_repetitions_for_catalog(catalog, VARIANTS, ALGORITHMS, SEEDS)
+
+
+def run_experiment_repetitions_for_catalog(
+    catalog: List[Dict[str, str]],
+    variants: List[str],
+    algorithms: List[str],
+    seeds: List[int],
+) -> List[Dict[str, Any]]:
+    """Run the repetition loop for a provided catalog.
+
+    Used by --smoke to keep the same row schema and error handling.
+    """
+    rows: List[Dict[str, Any]] = []
     for entry in catalog:
         instance_path = entry["path"]
         instance_size = entry["size"]
         instance = load_instance_from_file(Path(instance_path))
-        for variant in VARIANTS:
+        for variant in variants:
             objective_value = get_objective_for_variant(instance, variant)
-            for algorithm in ALGORITHMS:
-                for run_number, seed in enumerate(SEEDS, start=1):
+            for algorithm in algorithms:
+                for run_number, seed in enumerate(seeds, start=1):
                     try:
                         execution = run_single_execution(
                             instance_path,
@@ -268,12 +305,37 @@ JSON_OUTPUT_PATH = RESULTS_DIR / "experiment_results.json"
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description=(
+            "Generate experiment rows comparing variants A/B/C/D over the fixed Phase 6 instances. "
+            "Use --smoke to validate the pipeline quickly (recommended)."
+        )
+    )
+    parser.add_argument(
+        "--smoke",
+        action="store_true",
+        help="Run a reduced subset (1 instance per size, 1 seed) to validate outputs.",
+    )
+    args = parser.parse_args()
+
     verify_instance_selection()
-    catalog = build_instance_catalog()
-    print(f"Verified {len(catalog)} fixed phase 6 instances.")
-    print("First instance entry:", catalog[0])
-    print("Building experimental rows for reproducibility...")
-    rows = run_experiment_repetitions()
+
+    if args.smoke:
+        catalog = build_smoke_instance_catalog()
+        seeds = [SEEDS[0]]
+        print("Running SMOKE subset (Phase 6 Bloque 8):")
+        print(f"  instances={len(catalog)} (small/medium/large/manual)")
+        print(f"  variants={VARIANTS}")
+        print(f"  algorithms={ALGORITHMS}")
+        print(f"  seeds={seeds}")
+        rows = run_experiment_repetitions_for_catalog(catalog, VARIANTS, ALGORITHMS, seeds)
+    else:
+        catalog = build_instance_catalog()
+        print(f"Verified {len(catalog)} fixed phase 6 instances.")
+        print("First instance entry:", catalog[0])
+        print("Building experimental rows for reproducibility...")
+        rows = run_experiment_repetitions_for_catalog(catalog, VARIANTS, ALGORITHMS, SEEDS)
+
     print(f"Prepared {len(rows)} experiment rows.")
     save_experiment_results(rows)
     print(f"Saved results to {CSV_OUTPUT_PATH} and {JSON_OUTPUT_PATH}.")
