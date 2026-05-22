@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import argparse
 import inspect
+import logging
 import sys
+import time
 import pandas as pd
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from tqdm import tqdm
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
@@ -15,6 +19,39 @@ from src.variant_runner import load_instance_from_file, run_variant
 
 INSTANCES_DIR = ROOT_DIR / "data" / "instances"
 RESULTS_DIR = ROOT_DIR / "results"
+
+EXPERIMENTS_LOG_PATH = RESULTS_DIR / "experiments.log"
+
+
+def setup_experiment_logging(log_path: Path) -> logging.Logger:
+    """Configure a dedicated logger for the experiment runner.
+
+    We don't rely on logging.basicConfig here because other modules may have
+    configured logging earlier (making basicConfig a no-op). We also set
+    propagate=False to avoid duplicated console logs when the root logger has
+    handlers.
+    """
+
+    logger = logging.getLogger("experiments")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+
+    # Reset handlers to keep behavior predictable across repeated runs.
+    logger.handlers.clear()
+
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(formatter)
+
+    file_handler = logging.FileHandler(log_path, encoding="utf-8")
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+    return logger
 
 VARIANTS = ["A", "B", "C", "D"]
 ALGORITHMS = ["greedy", "a_star"]
@@ -118,8 +155,12 @@ def _run_variant_with_optional_seed(
         "use_ollama": use_ollama,
         "instance_name": instance_name,
     }
-    if "seed" in signature.parameters:
-        kwargs["seed"] = seed
+    if "seed" not in signature.parameters:
+        raise TypeError(
+            "run_variant() must accept a 'seed' parameter for Phase 7 reproducibility. "
+            "Update src/variant_runner.py to include seed propagation."
+        )
+    kwargs["seed"] = seed
     return run_variant(**kwargs)
 
 
@@ -262,6 +303,29 @@ def run_experiment_repetitions_for_catalog(
     Used by --smoke to keep the same row schema and error handling.
     """
     rows: List[Dict[str, Any]] = []
+    total = len(catalog) * len(variants) * len(algorithms) * len(seeds)
+    failures = 0
+
+    start_time = time.perf_counter()
+    logger = logging.getLogger("experiments")
+    logger.info("Starting experiments: %d executions", total)
+    logger.info(
+        "Config: instances=%d variants=%d algorithms=%d seeds=%s",
+        len(catalog),
+        len(variants),
+        len(algorithms),
+        seeds,
+    )
+    logger.info(
+        "Outputs: csv=%s json=%s trajectories_dir=%s log=%s metadata=%s",
+        CSV_OUTPUT_PATH,
+        JSON_OUTPUT_PATH,
+        RESULTS_DIR / "trajectories",
+        EXPERIMENTS_LOG_PATH,
+        RESULTS_DIR / "run_metadata.json",
+    )
+
+    progress = tqdm(total=total, desc="Experiments", unit="run")
     for entry in catalog:
         instance_path = entry["path"]
         instance_size = entry["size"]
@@ -270,6 +334,15 @@ def run_experiment_repetitions_for_catalog(
             objective_value = get_objective_for_variant(instance, variant)
             for algorithm in algorithms:
                 for run_number, seed in enumerate(seeds, start=1):
+                    logger.info(
+                        "Run: instance=%s size=%s variant=%s algorithm=%s seed=%s run_index=%d",
+                        Path(instance_path).name,
+                        instance_size,
+                        variant,
+                        algorithm,
+                        seed,
+                        run_number,
+                    )
                     try:
                         execution = run_single_execution(
                             instance_path,
@@ -280,6 +353,15 @@ def run_experiment_repetitions_for_catalog(
                         )
                         rows.append(build_result_row(execution, instance_size, run_number))
                     except Exception as exc:
+                        failures += 1
+                        logger.exception(
+                            "Execution failed: instance=%s variant=%s algorithm=%s seed=%s run_index=%d",
+                            Path(instance_path).name,
+                            variant,
+                            algorithm,
+                            seed,
+                            run_number,
+                        )
                         rows.append(
                             build_error_row(
                                 instance_path,
@@ -291,6 +373,18 @@ def run_experiment_repetitions_for_catalog(
                                 exc,
                             )
                         )
+                    finally:
+                        # Always tick 1 per attempted execution (even on failure).
+                        progress.update(1)
+    progress.close()
+
+    elapsed = time.perf_counter() - start_time
+    logger.info(
+        "Finished experiments: rows=%d failures=%d elapsed_seconds=%.3f",
+        len(rows),
+        failures,
+        elapsed,
+    )
     return rows
 
 
@@ -333,7 +427,15 @@ def assert_ollama_or_skip_llm_variants(variants: List[str]) -> List[str]:
     return [v for v in variants if v not in llm_variants]
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(...)
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    setup_experiment_logging(EXPERIMENTS_LOG_PATH)
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Run the full experiment matrix (instances x variants x algorithms x seeds) "
+            "and write results to results/experiment_results.csv|json."
+        )
+    )
     parser.add_argument(
         "--smoke",
         action="store_true",
