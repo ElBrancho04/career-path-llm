@@ -22,6 +22,7 @@ from src.variant_runner import load_instance_from_file, run_variant
 
 INSTANCES_DIR = ROOT_DIR / "data" / "instances"
 RESULTS_DIR = ROOT_DIR / "results"
+TRAJECTORIES_DIR = RESULTS_DIR / "trajectories"
 
 EXPERIMENTS_LOG_PATH = RESULTS_DIR / "experiments.log"
 RUN_METADATA_PATH = RESULTS_DIR / "run_metadata.json"
@@ -89,6 +90,52 @@ def write_run_metadata(path: Path, metadata: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2, ensure_ascii=False)
+
+
+def _trajectory_filename(
+    instance_name: str,
+    variant: str,
+    algorithm: str,
+    seed: int,
+    run_number: int,
+) -> str:
+    # Required format: {instance}__{variant}__{algorithm}__seed{seed}__run{run}.json
+    return f"{instance_name}__{variant}__{algorithm}__seed{seed}__run{run_number}.json"
+
+
+def write_execution_trajectory_json(
+    *,
+    instance_path: str,
+    variant: str,
+    algorithm: str,
+    seed: int,
+    run_number: int,
+    objective_value: Any,
+    result: Optional[Dict[str, Any]],
+    error: Optional[str],
+) -> Path:
+    """Write one JSON per execution (success or failure) and return its absolute path."""
+    TRAJECTORIES_DIR.mkdir(parents=True, exist_ok=True)
+
+    instance_name = Path(instance_path).name
+    filename = _trajectory_filename(instance_name, variant, algorithm, seed, run_number)
+    path = TRAJECTORIES_DIR / filename
+
+    payload = {
+        "instance": instance_name,
+        "variant": variant,
+        "algorithm": algorithm,
+        "seed": seed,
+        "run": run_number,
+        "timestamp_iso": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "objective_value": objective_value,
+        "result": result,
+        "error": error,
+    }
+
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, ensure_ascii=False)
+    return path
 
 
 def setup_experiment_logging(log_path: Path) -> logging.Logger:
@@ -319,6 +366,7 @@ def build_error_row(
         "llm_calls": 0,
         "llm_evaluation_score": None,
         "llm_evaluation_nota": None,
+        "trajectory_path": None,
         "trajectory_found": 0,
         "variant_type": get_variant_type(variant),
         "error_message": str(error),
@@ -330,6 +378,7 @@ def build_result_row(
     execution: Dict[str, Any],
     instance_size: str,
     run_number: int,
+    trajectory_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     result = execution["result"]
     trajectory = result.get("trajectory")
@@ -353,6 +402,7 @@ def build_result_row(
         "llm_calls": llm_calls,
         "llm_evaluation_score": llm_evaluation.get("score"),
         "llm_evaluation_nota": llm_evaluation.get("nota"),
+        "trajectory_path": str(trajectory_path.relative_to(RESULTS_DIR)) if trajectory_path else None,
         "trajectory_found": 0 if trajectory is None else 1,
         "variant_type": get_variant_type(execution["variant"]),
         "error_message": None,
@@ -393,10 +443,13 @@ def run_experiment_repetitions_for_catalog(
         "Outputs: csv=%s json=%s trajectories_dir=%s log=%s metadata=%s",
         CSV_OUTPUT_PATH,
         JSON_OUTPUT_PATH,
-        RESULTS_DIR / "trajectories",
+        TRAJECTORIES_DIR,
         EXPERIMENTS_LOG_PATH,
         RESULTS_DIR / "run_metadata.json",
     )
+
+    # Phase 7.5: ensure trajectories dir exists before any execution.
+    TRAJECTORIES_DIR.mkdir(parents=True, exist_ok=True)
 
     progress = tqdm(total=total, desc="Experiments", unit="run")
     for entry in catalog:
@@ -424,7 +477,17 @@ def run_experiment_repetitions_for_catalog(
                             objective_value,
                             seed,
                         )
-                        rows.append(build_result_row(execution, instance_size, run_number))
+                        trajectory_json_path = write_execution_trajectory_json(
+                            instance_path=instance_path,
+                            variant=variant,
+                            algorithm=algorithm,
+                            seed=seed,
+                            run_number=run_number,
+                            objective_value=objective_value,
+                            result=execution.get("result"),
+                            error=None,
+                        )
+                        rows.append(build_result_row(execution, instance_size, run_number, trajectory_path=trajectory_json_path))
                     except Exception as exc:
                         failures += 1
                         logger.exception(
@@ -434,6 +497,17 @@ def run_experiment_repetitions_for_catalog(
                             algorithm,
                             seed,
                             run_number,
+                        )
+
+                        trajectory_json_path = write_execution_trajectory_json(
+                            instance_path=instance_path,
+                            variant=variant,
+                            algorithm=algorithm,
+                            seed=seed,
+                            run_number=run_number,
+                            objective_value=objective_value,
+                            result=None,
+                            error=str(exc),
                         )
                         rows.append(
                             build_error_row(
@@ -446,6 +520,7 @@ def run_experiment_repetitions_for_catalog(
                                 exc,
                             )
                         )
+                        rows[-1]["trajectory_path"] = str(trajectory_json_path.relative_to(RESULTS_DIR))
                     finally:
                         # Always tick 1 per attempted execution (even on failure).
                         progress.update(1)

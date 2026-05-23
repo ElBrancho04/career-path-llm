@@ -3489,3 +3489,22 @@ NoneType: None
 2026-05-22 21:03:04,051 [INFO] Evaluate variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0000
 2026-05-22 21:03:04,052 [INFO] Running guided variant: instance=test_instance.json algorithm=greedy
 2026-05-22 21:03:04,052 [INFO] Guided variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=2 elapsed_time=0.0001
+2026-05-22 21:10:03,467 [WARNING] evaluate_trajectory: LLM evaluation failed: No valid JSON found in response text.
+2026-05-22 21:10:03,469 [WARNING] interpret_objective first attempt failed: No valid JSON found in response text.
+2026-05-22 21:10:03,470 [WARNING] interpret_objective: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
+2026-05-22 21:10:03,470 [WARNING] interpret_objective second attempt: JSON parsed but 'habilidades' missing or invalid. Response: {"skills": ["Python"]}
+2026-05-22 21:10:03,473 [WARNING] suggest_next_course: LLM suggestion failed: No valid JSON found in response text.
+2026-05-22 21:10:03,474 [INFO] suggest_next_course comparison: {'course_id': None, 'justification': 'LLM suggestion unavailable.', 'model_course_id': None, 'base_course_id': 'C2', 'match': False, 'available_courses': ['C2'], 'llm_response': {'choices': [{'message': {'content': 'No entiendo.'}}]}}
+2026-05-22 21:10:03,475 [INFO] suggest_next_course comparison: {'course_id': 'C2', 'justification': 'Sigue la ruta necesaria.', 'model_course_id': 'C2', 'base_course_id': 'C2', 'match': True, 'available_courses': ['C2'], 'llm_response': {'choices': [{'message': {'content': '{"course_id": "C2", "justificacion": "Sigue la ruta necesaria."}'}}]}}
+2026-05-22 21:10:03,476 [INFO] Running base variant: algorithm=greedy instance=test_instance.json
+2026-05-22 21:10:03,476 [INFO] Base variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0001
+2026-05-22 21:10:03,477 [INFO] Running interpret variant: instance=test_instance.json algorithm=greedy
+2026-05-22 21:10:03,478 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-22 21:10:03,479 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0001
+2026-05-22 21:10:03,479 [INFO] Interpret variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0001
+2026-05-22 21:10:03,481 [INFO] Running evaluate variant: instance=test_instance.json algorithm=greedy
+2026-05-22 21:10:03,481 [INFO] Running base variant: algorithm=greedy instance=unknown
+2026-05-22 21:10:03,482 [INFO] Base variant completed: instance=unknown algo=greedy success=True num_courses=2 llm_calls=0 elapsed_time=0.0000
+2026-05-22 21:10:03,482 [INFO] Evaluate variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=1 elapsed_time=0.0000
+2026-05-22 21:10:03,483 [INFO] Running guided variant: instance=test_instance.json algorithm=greedy
+2026-05-22 21:10:03,483 [INFO] Guided variant completed: instance=test_instance.json algo=greedy success=True num_courses=2 llm_calls=2 elapsed_time=0.0001
