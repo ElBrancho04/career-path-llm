@@ -5,6 +5,7 @@ import inspect
 import json
 import logging
 import platform
+import shutil
 import sys
 import time
 import pandas as pd
@@ -13,7 +14,23 @@ from typing import Any, Dict, List, Optional
 
 from tqdm import tqdm
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+def _find_repo_root(start: Path) -> Path:
+    """Best-effort repository root locator (C2).
+
+    Supports running the script from either:
+    - experiments/run_experiments.py  (ROOT = parent.parent)
+    - run_experiments.py at repo root (ROOT = parent)
+    """
+    start = start.resolve()
+    candidates = [start.parent, start.parent.parent]
+    for cand in candidates:
+        if (cand / "src").is_dir() and (cand / "data").is_dir():
+            return cand
+    # Fallback (keep previous behavior).
+    return start.parent.parent
+
+
+ROOT_DIR = _find_repo_root(Path(__file__))
 sys.path.insert(0, str(ROOT_DIR))
 
 from src.llm_wrapper import check_ollama_available
@@ -79,6 +96,7 @@ def build_run_metadata() -> Dict[str, Any]:
         "machine_arch": platform.machine(),
         "ollama_model": llm_cfg.get("model"),
         "endpoint_local": llm_cfg.get("endpoint_local"),
+        "temperature": llm_cfg.get("temperature"),
         "request_timeout": llm_cfg.get("request_timeout"),
         "max_retries": llm_cfg.get("max_retries"),
         "git_commit": _safe_get_git_commit(),
@@ -185,7 +203,7 @@ def setup_experiment_logging(log_path: Path) -> logging.Logger:
     return logger
 
 VARIANTS = ["A", "B", "C", "D"]
-ALGORITHMS = ["greedy", "a_star"]
+ALGORITHMS = ["greedy", "a_star", "exact_small"]
 SEEDS = [1, 2, 3, 4, 5]
 
 SMALL_INSTANCES = [f"synthetic_10_courses_{i:02d}.json" for i in range(1, 11)]
@@ -475,6 +493,10 @@ def run_experiment_repetitions_for_catalog(
         for variant in variants:
             objective_value = get_objective_for_variant(instance, variant)
             for algorithm in algorithms:
+                # C4: keep exact_small only for small/manual instances (avoid blow-ups on larger).
+                if algorithm == "exact_small" and instance_size not in {"small", "manual"}:
+                    progress.update(len(seeds))
+                    continue
                 for run_number, seed in enumerate(seeds, start=1):
                     logger.info(
                         "Run: instance=%s size=%s variant=%s algorithm=%s seed=%s run_index=%d",
@@ -614,6 +636,9 @@ def assert_ollama_or_skip_llm_variants(variants: List[str]) -> List[str]:
 
 if __name__ == "__main__":
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    # C6: clean trajectories to avoid residual files breaking smoke validation.
+    if TRAJECTORIES_DIR.exists():
+        shutil.rmtree(TRAJECTORIES_DIR)
     TRAJECTORIES_DIR.mkdir(parents=True, exist_ok=True)
     logger = setup_experiment_logging(EXPERIMENTS_LOG_PATH)
 
@@ -630,6 +655,7 @@ if __name__ == "__main__":
         "machine_arch",
         "ollama_model",
         "endpoint_local",
+    "temperature",
         "request_timeout",
         "max_retries",
         "git_commit",

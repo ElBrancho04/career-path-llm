@@ -15,14 +15,39 @@ CACHE_PATH = PROJECT_ROOT / "data" / "llm_cache.json"
 LOG_PATH = PROJECT_ROOT / "data" / "llm_wrapper.log"
 
 LOGGING_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
-logging.basicConfig(
-    level=logging.INFO,
-    format=LOGGING_FORMAT,
-    handlers=[
-        logging.FileHandler(LOG_PATH, encoding="utf-8"),
-        logging.StreamHandler(),
-    ],
-)
+
+
+def _setup_logging() -> logging.Logger:
+    """Idempotent logging setup.
+
+    Important: avoid creating FileHandler at import-time because in a clean
+    install the `data/` directory may not exist yet (C1).
+    """
+    logger = logging.getLogger(__name__)
+    if getattr(logger, "_career_path_llm_configured", False):
+        return logger
+
+    # Ensure the log directory exists before FileHandler.
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+
+    formatter = logging.Formatter(LOGGING_FORMAT)
+    file_handler = logging.FileHandler(LOG_PATH, encoding="utf-8")
+    file_handler.setFormatter(formatter)
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+
+    # Avoid duplicates if module reloaded.
+    logger.handlers.clear()
+    logger.addHandler(file_handler)
+    logger.addHandler(stream_handler)
+
+    setattr(logger, "_career_path_llm_configured", True)
+    return logger
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,6 +66,7 @@ def _ensure_cache_file() -> None:
 
 
 def load_cache() -> Dict[str, Any]:
+    _setup_logging()
     _ensure_cache_file()
     with CACHE_PATH.open("r", encoding="utf-8") as stream:
         try:
@@ -53,6 +79,7 @@ def load_cache() -> Dict[str, Any]:
 
 
 def save_cache(cache: Dict[str, Any]) -> None:
+    _setup_logging()
     _ensure_cache_file()
     with CACHE_PATH.open("w", encoding="utf-8") as stream:
         json.dump(cache, stream, indent=2, ensure_ascii=False)
@@ -121,6 +148,7 @@ def check_ollama_available(timeout: float = 4.0) -> bool:
     Ollama está disponible. Usar antes de lanzar el experimento completo para
     fallar rápido en lugar de repetir errores durante horas.
     """
+    _setup_logging()
     try:
         config = load_llm_config()
         endpoint = config.get("endpoint_local", "http://localhost:11434")
@@ -149,6 +177,7 @@ def call_ollama(
     max_retries: Optional[int] = None,
     backoff_base: Optional[float] = None,
 ) -> Dict[str, Any]:
+    _setup_logging()
     config = load_llm_config()
     endpoint = config.get("endpoint_local")
     if not endpoint:

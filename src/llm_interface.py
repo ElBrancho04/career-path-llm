@@ -265,7 +265,7 @@ def suggest_next_course(
     return result
 
 
-def interpret_objective(text: str) -> Set[str]:
+def interpret_objective(text: str, instance: Optional[PlanningInstance] = None) -> Set[str]:
     prompt = _build_objective_prompt(text)
     try:
         response = call_ollama(prompt)
@@ -273,7 +273,11 @@ def interpret_objective(text: str) -> Set[str]:
         parsed = _parse_json_snippet(raw_text)
         habilidades = parsed.get("habilidades")
         if isinstance(habilidades, list):
-            return {str(item).strip() for item in habilidades if item is not None}
+            extracted = {str(item).strip() for item in habilidades if item is not None}
+            if instance is not None:
+                skill_map = {str(s).lower(): str(s) for s in instance.skills}
+                return {skill_map.get(s.lower(), s) for s in extracted}
+            return extracted
         logger.warning("interpret_objective: JSON parsed but 'habilidades' missing or invalid. Response: %s", raw_text)
     except Exception as exc:
         logger.warning("interpret_objective first attempt failed: %s", exc)
@@ -286,7 +290,11 @@ def interpret_objective(text: str) -> Set[str]:
         parsed = _parse_json_snippet(raw_text)
         habilidades = parsed.get("habilidades")
         if isinstance(habilidades, list):
-            return {str(item).strip() for item in habilidades if item is not None}
+            extracted = {str(item).strip() for item in habilidades if item is not None}
+            if instance is not None:
+                skill_map = {str(s).lower(): str(s) for s in instance.skills}
+                return {skill_map.get(s.lower(), s) for s in extracted}
+            return extracted
         logger.warning("interpret_objective second attempt: JSON parsed but 'habilidades' missing or invalid. Response: %s", raw_text)
     except Exception as exc:
         logger.error("interpret_objective second attempt failed: %s", exc)

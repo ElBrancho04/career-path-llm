@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Optional, Set
 
 from src.a_star import a_star_search
+from src.exact_small import exact_small_search
 from src.greedy import greedy_search
 from src.llm_interface import evaluate_trajectory, interpret_objective, suggest_next_course
 from src.problem_formalization import PlanningInstance, load_instance_from_file
@@ -28,6 +29,8 @@ VariantResult = Dict[str, Any]
 def select_algorithm(algorithm_name: str) -> Callable[[PlanningInstance], Dict[str, Any]]:
     if algorithm_name == "a_star":
         return a_star_search
+    if algorithm_name == "exact_small":
+        return exact_small_search
     return greedy_search
 
 
@@ -123,7 +126,7 @@ def run_interpret_variant(
     if not use_ollama:
         raise ValueError("interpret variant requires Ollama enabled.")
     logger.info("Running interpret variant: instance=%s algorithm=%s", instance_name or "unknown", algorithm_name)
-    interpreted_objective = interpret_objective(objective_text)
+    interpreted_objective = interpret_objective(objective_text, instance)
     base_result = run_base_variant(instance, interpreted_objective, algorithm_name, rng=rng)
     base_result["llm_calls"] = 1
     base_result["interpreted_objective"] = sorted(interpreted_objective)
@@ -150,6 +153,26 @@ def run_evaluate_variant(
         raise ValueError("evaluate variant requires Ollama enabled.")
     logger.info("Running evaluate variant: instance=%s algorithm=%s", instance_name or "unknown", algorithm_name)
     base_result = run_base_variant(instance, objective, algorithm_name, rng=rng)
+
+    # M3: If the base solver fails, don't call the LLM with an empty trajectory.
+    if not base_result.get("success"):
+        base_result["llm_calls"] = 0
+        base_result["llm_evaluation"] = {
+            "score": None,
+            "nota": None,
+            "justification": "Base solver failed; skipping LLM evaluation.",
+            "qualitative_comment": "LLM evaluation skipped due to failed search.",
+            "llm_response": None,
+            "valid": False,
+            "coverage": None,
+        }
+        logger.info(
+            "Evaluate variant skipped LLM (base failure): instance=%s algo=%s llm_calls=0",
+            instance_name or "unknown",
+            algorithm_name,
+        )
+        return base_result
+
     try:
         llm_eval = evaluate_trajectory(base_result["trajectory"] or [], instance, objective)
     except Exception as exc:

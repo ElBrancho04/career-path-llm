@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import heapq
+import itertools
 import random
 import time
 from typing import Dict, List, Optional, Set, Tuple
@@ -87,18 +88,19 @@ def a_star_search(
         }
 
     start_h = _heuristic_missing_courses(instance, initial_skills, set())
-    # Add a tie-breaker component so that expansions can vary across seeds
-    # while remaining deterministic for a fixed seed.
-    start_tie = rng.random() if rng is not None else 0.0
-    frontier: List[Tuple[float, int, int, frozenset[str], List[str]]] = [
-        (float(start_h) + start_tie, start_h, 0, start_state, [])
+    # C3: Tie-break without perturbing f-score (preserves A* admissibility).
+    # We use an insertion counter as second key and optionally shuffle successor
+    # generation order, which affects exploration but not costs.
+    counter = itertools.count()
+    frontier: List[Tuple[int, int, int, frozenset[str], List[str]]] = [
+        (start_h, next(counter), 0, start_state, [])
     ]
     best_cost: Dict[frozenset[str], int] = {start_state: 0}
     iterations = 0
 
     while frontier and iterations < max_iterations:
         iterations += 1
-        _, f, g, state, trajectory = heapq.heappop(frontier)
+        f, _, g, state, trajectory = heapq.heappop(frontier)
         if best_cost.get(state, float("inf")) < g:
             continue
 
@@ -114,7 +116,10 @@ def a_star_search(
                 "success": True,
             }
 
-        for course in _available_courses(instance, acquired_skills, completed_courses):
+        successors = _available_courses(instance, acquired_skills, completed_courses)
+        if rng is not None:
+            rng.shuffle(successors)
+        for course in successors:
             next_completed = set(completed_courses)
             next_completed.add(course.id)
             next_state = _state_key(next_completed)
@@ -127,10 +132,9 @@ def a_star_search(
             next_h = _heuristic_missing_courses(instance, next_acquired_skills, next_completed)
             next_f = next_g + next_h
             next_trajectory = trajectory + [course.id]
-            tie = rng.random() if rng is not None else 0.0
 
             best_cost[next_state] = next_g
-            heapq.heappush(frontier, (float(next_f) + tie, next_f, next_g, next_state, next_trajectory))
+            heapq.heappush(frontier, (next_f, next(counter), next_g, next_state, next_trajectory))
 
     elapsed_time = time.perf_counter() - start_time
     return {

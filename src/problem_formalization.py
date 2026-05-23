@@ -126,6 +126,10 @@ def build_solution(
     completed_courses: Set[CourseId] = set()
     for course_id in trajectory:
         course = instance.courses[course_id]
+        if not is_course_available(course, acquired_skills, completed_courses):
+            raise ValueError(
+                f"Course '{course_id}' not available at this point in the trajectory."
+            )
         apply_course(course, acquired_skills, completed_courses)
 
     return SolutionTrajectory(
