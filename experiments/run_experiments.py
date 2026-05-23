@@ -121,6 +121,22 @@ def write_execution_trajectory_json(
     filename = _trajectory_filename(instance_name, variant, algorithm, seed, run_number)
     path = TRAJECTORIES_DIR / filename
 
+    def _to_jsonable(value: Any) -> Any:
+        if value is None:
+            return None
+        if isinstance(value, (str, int, float, bool)):
+            return value
+        if isinstance(value, Path):
+            return str(value)
+        if isinstance(value, set):
+            return sorted(_to_jsonable(v) for v in value)
+        if isinstance(value, (list, tuple)):
+            return [_to_jsonable(v) for v in value]
+        if isinstance(value, dict):
+            return {str(k): _to_jsonable(v) for k, v in value.items()}
+        # Last resort: keep a stable representation instead of crashing.
+        return str(value)
+
     payload = {
         "instance": instance_name,
         "variant": variant,
@@ -128,8 +144,8 @@ def write_execution_trajectory_json(
         "seed": seed,
         "run": run_number,
         "timestamp_iso": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-        "objective_value": objective_value,
-        "result": result,
+        "objective_value": _to_jsonable(objective_value),
+        "result": _to_jsonable(result),
         "error": error,
     }
 
@@ -543,6 +559,28 @@ def save_experiment_results(rows: List[Dict[str, Any]]) -> None:
     dataframe.to_json(JSON_OUTPUT_PATH, orient="records", indent=2)
 
 
+def validate_smoke_outputs(*, csv_path: Path, metadata_path: Path, trajectories_dir: Path) -> None:
+    if not csv_path.exists():
+        raise FileNotFoundError(f"Smoke validation failed: missing {csv_path}")
+
+    df = pd.read_csv(csv_path)
+    if len(df) <= 0:
+        raise AssertionError(f"Smoke validation failed: {csv_path} has 0 rows")
+
+    if not metadata_path.exists():
+        raise FileNotFoundError(f"Smoke validation failed: missing {metadata_path}")
+
+    if not trajectories_dir.exists():
+        raise FileNotFoundError(f"Smoke validation failed: missing {trajectories_dir}")
+
+    json_files = sorted(p for p in trajectories_dir.glob("*.json") if p.is_file())
+    if len(json_files) != len(df):
+        raise AssertionError(
+            "Smoke validation failed: trajectories count mismatch "
+            f"(trajectories={len(json_files)} csv_rows={len(df)})"
+        )
+
+
 CSV_OUTPUT_PATH = RESULTS_DIR / "experiment_results.csv"
 JSON_OUTPUT_PATH = RESULTS_DIR / "experiment_results.json"
 
@@ -576,6 +614,7 @@ def assert_ollama_or_skip_llm_variants(variants: List[str]) -> List[str]:
 
 if __name__ == "__main__":
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    TRAJECTORIES_DIR.mkdir(parents=True, exist_ok=True)
     logger = setup_experiment_logging(EXPERIMENTS_LOG_PATH)
 
     # Phase 7.3: environment + model metadata.
@@ -619,7 +658,9 @@ if __name__ == "__main__":
         catalog = build_smoke_instance_catalog()
         seeds = [SEEDS[0]]
         print(f"Running SMOKE subset: {len(catalog)} instancias, variantes={active_variants}")
+        start = time.perf_counter()
         rows = run_experiment_repetitions_for_catalog(catalog, active_variants, ALGORITHMS, seeds)
+        elapsed = time.perf_counter() - start
     else:
         catalog = build_instance_catalog()
         print(f"Verified {len(catalog)} instances. Variantes activas: {active_variants}")
@@ -628,3 +669,23 @@ if __name__ == "__main__":
     print(f"Prepared {len(rows)} experiment rows.")
     save_experiment_results(rows)
     print(f"Saved results to {CSV_OUTPUT_PATH} and {JSON_OUTPUT_PATH}.")
+
+    # Phase 7.6: smoke-mode automatic validations + summary.
+    if args.smoke:
+        validate_smoke_outputs(
+            csv_path=CSV_OUTPUT_PATH,
+            metadata_path=RUN_METADATA_PATH,
+            trajectories_dir=TRAJECTORIES_DIR,
+        )
+
+        df = pd.read_csv(CSV_OUTPUT_PATH)
+        total_rows = len(df)
+        successes = int(df["success"].sum()) if "success" in df.columns else 0
+        failures = int(df["failed"].sum()) if "failed" in df.columns else 0
+
+        print("\nSMOKE summary (Phase 7.6)")
+        print(f"  rows={total_rows} successes={successes} failures={failures} elapsed_seconds={elapsed:.3f}")
+        print(f"  csv={CSV_OUTPUT_PATH}")
+        print(f"  json={JSON_OUTPUT_PATH}")
+        print(f"  metadata={RUN_METADATA_PATH}")
+        print(f"  trajectories_dir={TRAJECTORIES_DIR}")
