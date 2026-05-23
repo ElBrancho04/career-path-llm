@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import argparse
 import inspect
+import json
 import logging
+import platform
 import sys
 import time
 import pandas as pd
@@ -15,12 +17,78 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 
 from src.llm_wrapper import check_ollama_available
+from src.llm_wrapper import load_llm_config
 from src.variant_runner import load_instance_from_file, run_variant
 
 INSTANCES_DIR = ROOT_DIR / "data" / "instances"
 RESULTS_DIR = ROOT_DIR / "results"
 
 EXPERIMENTS_LOG_PATH = RESULTS_DIR / "experiments.log"
+RUN_METADATA_PATH = RESULTS_DIR / "run_metadata.json"
+
+EXECUTOR_CONTROLLED_ENV_STATEMENT = (
+    "Ejecutado en la misma máquina y sin cargas pesadas en paralelo (declaración del ejecutor)."
+)
+
+
+def _safe_get_git_commit() -> Optional[str]:
+    """Best-effort current git commit hash.
+
+    Returns None if git isn't available or this isn't a git repo.
+    """
+    try:
+        import subprocess
+
+        completed = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(ROOT_DIR),
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        commit = (completed.stdout or "").strip()
+        return commit or None
+    except Exception:
+        return None
+
+
+def _get_cpu_info() -> str:
+    """Return a human-readable CPU identifier (best-effort, cross-platform)."""
+    # platform.processor() is often empty on Windows; platform.uname().processor can help.
+    processor = platform.processor() or platform.uname().processor
+    if processor:
+        return processor
+    # Fallback to something non-empty.
+    return f"{platform.machine()} ({platform.system()})"
+
+
+def build_run_metadata() -> Dict[str, Any]:
+    llm_cfg: Dict[str, Any] = {}
+    try:
+        llm_cfg = load_llm_config()
+    except Exception:
+        llm_cfg = {}
+
+    return {
+        "timestamp_iso": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "os_name": platform.system(),
+        "os_version": platform.version(),
+        "python_version": platform.python_version(),
+        "cpu_info": _get_cpu_info(),
+        "machine_arch": platform.machine(),
+        "ollama_model": llm_cfg.get("model"),
+        "endpoint_local": llm_cfg.get("endpoint_local"),
+        "request_timeout": llm_cfg.get("request_timeout"),
+        "max_retries": llm_cfg.get("max_retries"),
+        "git_commit": _safe_get_git_commit(),
+        "controlled_environment_statement": EXECUTOR_CONTROLLED_ENV_STATEMENT,
+    }
+
+
+def write_run_metadata(path: Path, metadata: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(metadata, f, indent=2, ensure_ascii=False)
 
 
 def setup_experiment_logging(log_path: Path) -> logging.Logger:
@@ -428,7 +496,27 @@ def assert_ollama_or_skip_llm_variants(variants: List[str]) -> List[str]:
 
 if __name__ == "__main__":
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    setup_experiment_logging(EXPERIMENTS_LOG_PATH)
+    logger = setup_experiment_logging(EXPERIMENTS_LOG_PATH)
+
+    # Phase 7.3: environment + model metadata.
+    metadata = build_run_metadata()
+    write_run_metadata(RUN_METADATA_PATH, metadata)
+    logger.info("Hardware/Model summary (Phase 7.3):")
+    for key in [
+        "timestamp_iso",
+        "os_name",
+        "os_version",
+        "python_version",
+        "cpu_info",
+        "machine_arch",
+        "ollama_model",
+        "endpoint_local",
+        "request_timeout",
+        "max_retries",
+        "git_commit",
+        "controlled_environment_statement",
+    ]:
+        logger.info("  %s=%s", key, metadata.get(key))
 
     parser = argparse.ArgumentParser(
         description=(
