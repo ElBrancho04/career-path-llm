@@ -144,7 +144,12 @@ def evaluate_trajectory(
         llm_result = _parse_evaluate_response(llm_response)
     except Exception as exc:
         logger.warning("evaluate_trajectory: LLM evaluation failed: %s", exc)
-        llm_result = {"nota": None, "justificacion": "LLM evaluation not available."}
+        # Keep schema stable for downstream CSV export: always provide nota.
+        llm_result = {
+            "nota": None,
+            "justificacion": "LLM evaluation not available.",
+            "raw_text": None,
+        }
 
     heuristic = _heuristic_score(trajectory, instance, objective)
     valid = is_valid_trajectory(trajectory, instance)

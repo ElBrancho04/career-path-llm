@@ -70,7 +70,7 @@ def _build_common_result(
         "elapsed_time": elapsed_time,
         "num_courses": num_courses,
         "success": success,
-        "llm_calls": llm_calls,
+        "llm_calls": int(llm_calls or 0),
     }
     if llm_evaluation is not None:
         result["llm_evaluation"] = llm_evaluation
@@ -192,6 +192,8 @@ def run_guided_variant(
     completed_courses: Set[str] = set()
     trajectory: list = []
     llm_step_log: list = []
+    # Define llm_calls as "number of guided steps attempted".
+    # This stays >=0 and matches the number of loop iterations (even if we fall back).
     llm_calls = 0
     last_suggestion: Optional[Dict[str, Any]] = None
 

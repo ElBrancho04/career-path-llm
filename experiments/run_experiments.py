@@ -334,6 +334,11 @@ def build_result_row(
     result = execution["result"]
     trajectory = result.get("trajectory")
     llm_evaluation = result.get("llm_evaluation", {}) or {}
+    llm_calls_raw = result.get("llm_calls", 0)
+    try:
+        llm_calls = int(llm_calls_raw) if llm_calls_raw is not None else 0
+    except (TypeError, ValueError):
+        llm_calls = 0
     return {
         "instance": Path(execution["instance_path"]).name,
         "instance_size": instance_size,
@@ -345,7 +350,7 @@ def build_result_row(
         "total_cost": result.get("total_cost"),
         "num_courses": result.get("num_courses"),
         "elapsed_time": result.get("elapsed_time"),
-        "llm_calls": result.get("llm_calls", 0),
+        "llm_calls": llm_calls,
         "llm_evaluation_score": llm_evaluation.get("score"),
         "llm_evaluation_nota": llm_evaluation.get("nota"),
         "trajectory_found": 0 if trajectory is None else 1,
