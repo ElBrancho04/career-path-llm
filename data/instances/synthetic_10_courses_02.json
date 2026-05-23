@@ -131,7 +131,8 @@
       ],
       "skills_required": [
         "Algorithms",
-        "Machine Learning"
+        "Machine Learning",
+        "Python"
       ],
       "prerequisites": [
         "C01",
@@ -139,7 +140,7 @@
         "C05"
       ],
       "credits": 3,
-      "difficulty": 4.3
+      "difficulty": 4.8
     },
     {
       "id": "C10",
@@ -149,23 +150,23 @@
       ],
       "skills_required": [
         "Algorithms",
+        "Data Analysis",
         "Statistics"
       ],
       "prerequisites": [
         "C02",
         "C03",
-        "C05",
-        "C07"
+        "C05"
       ],
-      "credits": 3,
-      "difficulty": 3.9
+      "credits": 2,
+      "difficulty": 2.5
     }
   ],
   "initial_skills": [],
   "target_skills": [
-    "Algorithms",
-    "Cloud Computing",
-    "Machine Learning",
-    "Python"
+    "Data Analysis",
+    "Python",
+    "Software Design",
+    "Statistics"
   ]
 }

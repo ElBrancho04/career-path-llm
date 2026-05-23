@@ -106,83 +106,84 @@
         "Algorithms",
         "Data Analysis"
       ],
-      "skills_required": [],
+      "skills_required": [
+        "Cybersecurity",
+        "Python"
+      ],
       "prerequisites": [
         "C04",
-        "C06"
+        "C05"
       ],
-      "credits": 4,
-      "difficulty": 3.1
+      "credits": 5,
+      "difficulty": 4.4
     },
     {
       "id": "C08",
-      "name": "Course 08 (Communication, Software Design)",
+      "name": "Course 08 (Software Design)",
       "skills_granted": [
-        "Communication",
         "Software Design"
       ],
       "skills_required": [
-        "Big Data",
         "Natural Language Processing"
       ],
       "prerequisites": [
-        "C01",
         "C06"
       ],
-      "credits": 3,
-      "difficulty": 4.5
+      "credits": 2,
+      "difficulty": 4.8
     },
     {
       "id": "C09",
-      "name": "Course 09 (Machine Learning)",
+      "name": "Course 09 (Communication)",
       "skills_granted": [
-        "Machine Learning"
+        "Communication"
       ],
-      "skills_required": [],
+      "skills_required": [
+        "Big Data"
+      ],
       "prerequisites": [
         "C01"
       ],
-      "credits": 3,
-      "difficulty": 2.0
+      "credits": 5,
+      "difficulty": 1.4
     },
     {
       "id": "C10",
-      "name": "Course 10 (Data Engineering)",
+      "name": "Course 10 (Machine Learning)",
+      "skills_granted": [
+        "Machine Learning"
+      ],
+      "skills_required": [
+        "Cybersecurity"
+      ],
+      "prerequisites": [
+        "C04"
+      ],
+      "credits": 4,
+      "difficulty": 2.9
+    },
+    {
+      "id": "C11",
+      "name": "Course 11 (Data Engineering)",
       "skills_granted": [
         "Data Engineering"
       ],
       "skills_required": [
+        "Algorithms",
         "Machine Learning"
       ],
       "prerequisites": [
-        "C05",
-        "C09"
-      ],
-      "credits": 4,
-      "difficulty": 2.0
-    },
-    {
-      "id": "C11",
-      "name": "Course 11 (Deep Learning)",
-      "skills_granted": [
-        "Deep Learning"
-      ],
-      "skills_required": [
-        "Communication"
-      ],
-      "prerequisites": [
         "C07",
-        "C08",
-        "C09"
+        "C10"
       ],
-      "credits": 2,
-      "difficulty": 1.6
+      "credits": 3,
+      "difficulty": 2.4
     },
     {
       "id": "C12",
-      "name": "Course 12 (SQL)",
+      "name": "Course 12 (Deep Learning)",
       "skills_granted": [
-        "SQL"
+        "Deep Learning"
       ],
       "skills_required": [],
       "prerequisites": [],
@@ -191,302 +192,328 @@
     },
     {
       "id": "C13",
-      "name": "Course 13 (Statistics)",
+      "name": "Course 13 (SQL)",
       "skills_granted": [
-        "Statistics"
+        "SQL"
       ],
-      "skills_required": [],
+      "skills_required": [
+        "Software Design"
+      ],
       "prerequisites": [
-        "C08",
-        "C11"
+        "C08"
       ],
       "credits": 2,
       "difficulty": 1.1
     },
     {
       "id": "C14",
-      "name": "Course 14 (Distributed Systems)",
+      "name": "Course 14 (Statistics)",
+      "skills_granted": [
+        "Statistics"
+      ],
+      "skills_required": [
+        "Cybersecurity",
+        "Data Engineering",
+        "Python"
+      ],
+      "prerequisites": [
+        "C04",
+        "C05",
+        "C11"
+      ],
+      "credits": 4,
+      "difficulty": 1.0
+    },
+    {
+      "id": "C15",
+      "name": "Course 15 (Distributed Systems)",
       "skills_granted": [
         "Distributed Systems"
       ],
       "skills_required": [
-        "Computer Vision"
+        "Data Engineering"
       ],
       "prerequisites": [
-        "C03"
-      ],
-      "credits": 5,
-      "difficulty": 1.4
-    },
-    {
-      "id": "C15",
-      "name": "Course 15 (Project Management)",
-      "skills_granted": [
-        "Project Management"
-      ],
-      "skills_required": [],
-      "prerequisites": [
-        "C12"
+        "C11"
       ],
       "credits": 3,
       "difficulty": 1.4
     },
     {
       "id": "C16",
-      "name": "Course 16 (AI Ethics, Databases)",
+      "name": "Course 16 (AI Ethics, Project Management)",
       "skills_granted": [
         "AI Ethics",
-        "Databases"
+        "Project Management"
       ],
       "skills_required": [
+        "Computer Vision",
         "Distributed Systems",
-        "Software Design"
+        "SQL"
       ],
       "prerequisites": [
-        "C08",
-        "C14"
+        "C03",
+        "C13",
+        "C15"
       ],
-      "credits": 4,
-      "difficulty": 1.9
+      "credits": 5,
+      "difficulty": 3.6
     },
     {
       "id": "C17",
-      "name": "Course 17 (Databases, DevOps)",
+      "name": "Course 17 (Databases)",
       "skills_granted": [
+        "Databases"
+      ],
+      "skills_required": [
+        "AI Ethics",
+        "Natural Language Processing"
+      ],
+      "prerequisites": [
+        "C06",
+        "C16"
+      ],
+      "credits": 4,
+      "difficulty": 4.1
+    },
+    {
+      "id": "C18",
+      "name": "Course 18 (Software Design)",
+      "skills_granted": [
+        "Software Design"
+      ],
+      "skills_required": [
+        "Algorithms",
         "Databases",
-        "DevOps"
+        "Deep Learning"
+      ],
+      "prerequisites": [
+        "C07",
+        "C12",
+        "C17"
+      ],
+      "credits": 2,
+      "difficulty": 2.4
+    },
+    {
+      "id": "C19",
+      "name": "Course 19 (Python)",
+      "skills_granted": [
+        "Python"
       ],
       "skills_required": [],
       "prerequisites": [],
       "credits": 2,
-      "difficulty": 4.0
-    },
-    {
-      "id": "C18",
-      "name": "Course 18 (Natural Language Processing)",
-      "skills_granted": [
-        "Natural Language Processing"
-      ],
-      "skills_required": [
-        "Data Analysis"
-      ],
-      "prerequisites": [
-        "C02",
-        "C07",
-        "C15"
-      ],
-      "credits": 2,
-      "difficulty": 2.5
-    },
-    {
-      "id": "C19",
-      "name": "Course 19 (Databases)",
-      "skills_granted": [
-        "Databases"
-      ],
-      "skills_required": [],
-      "prerequisites": [
-        "C01",
-        "C02"
-      ],
-      "credits": 5,
-      "difficulty": 2.2
+      "difficulty": 1.2
     },
     {
       "id": "C20",
-      "name": "Course 20 (Distributed Systems)",
+      "name": "Course 20 (Python)",
+      "skills_granted": [
+        "Python"
+      ],
+      "skills_required": [
+        "Project Management",
+        "SQL"
+      ],
+      "prerequisites": [
+        "C13",
+        "C16"
+      ],
+      "credits": 5,
+      "difficulty": 4.0
+    },
+    {
+      "id": "C21",
+      "name": "Course 21 (SQL)",
+      "skills_granted": [
+        "SQL"
+      ],
+      "skills_required": [
+        "Distributed Systems"
+      ],
+      "prerequisites": [
+        "C15"
+      ],
+      "credits": 3,
+      "difficulty": 1.7
+    },
+    {
+      "id": "C22",
+      "name": "Course 22 (Distributed Systems)",
       "skills_granted": [
         "Distributed Systems"
       ],
       "skills_required": [
         "Algorithms",
+        "Natural Language Processing",
         "Python"
       ],
       "prerequisites": [
-        "C02",
         "C05",
-        "C07",
-        "C12"
+        "C06",
+        "C07"
       ],
-      "credits": 5,
-      "difficulty": 1.7
+      "credits": 4,
+      "difficulty": 4.8
     },
     {
-      "id": "C21",
-      "name": "Course 21 (DevOps)",
+      "id": "C23",
+      "name": "Course 23 (Deep Learning, Distributed Systems)",
       "skills_granted": [
-        "DevOps"
+        "Deep Learning",
+        "Distributed Systems"
+      ],
+      "skills_required": [
+        "Communication",
+        "Python"
+      ],
+      "prerequisites": [
+        "C09",
+        "C19"
+      ],
+      "credits": 4,
+      "difficulty": 4.1
+    },
+    {
+      "id": "C24",
+      "name": "Course 24 (SQL)",
+      "skills_granted": [
+        "SQL"
+      ],
+      "skills_required": [
+        "Machine Learning",
+        "Python"
+      ],
+      "prerequisites": [
+        "C10",
+        "C19"
+      ],
+      "credits": 2,
+      "difficulty": 1.2
+    },
+    {
+      "id": "C25",
+      "name": "Course 25 (Databases)",
+      "skills_granted": [
+        "Databases"
       ],
       "skills_required": [
         "SQL"
       ],
       "prerequisites": [
-        "C04",
-        "C07",
-        "C12"
-      ],
-      "credits": 5,
-      "difficulty": 1.5
-    },
-    {
-      "id": "C22",
-      "name": "Course 22 (Project Management)",
-      "skills_granted": [
-        "Project Management"
-      ],
-      "skills_required": [
-        "Databases"
-      ],
-      "prerequisites": [
-        "C07",
-        "C10",
-        "C16"
+        "C13",
+        "C24"
       ],
       "credits": 4,
-      "difficulty": 2.4
-    },
-    {
-      "id": "C23",
-      "name": "Course 23 (Databases, Natural Language Processing)",
-      "skills_granted": [
-        "Databases",
-        "Natural Language Processing"
-      ],
-      "skills_required": [],
-      "prerequisites": [],
-      "credits": 4,
-      "difficulty": 1.7
-    },
-    {
-      "id": "C24",
-      "name": "Course 24 (Communication)",
-      "skills_granted": [
-        "Communication"
-      ],
-      "skills_required": [
-        "Distributed Systems"
-      ],
-      "prerequisites": [
-        "C11",
-        "C14"
-      ],
-      "credits": 3,
-      "difficulty": 2.2
-    },
-    {
-      "id": "C25",
-      "name": "Course 25 (Natural Language Processing)",
-      "skills_granted": [
-        "Natural Language Processing"
-      ],
-      "skills_required": [],
-      "prerequisites": [
-        "C06",
-        "C07",
-        "C10"
-      ],
-      "credits": 4,
-      "difficulty": 3.8
+      "difficulty": 2.5
     },
     {
       "id": "C26",
-      "name": "Course 26 (Deep Learning)",
-      "skills_granted": [
-        "Deep Learning"
-      ],
-      "skills_required": [
-        "Deep Learning"
-      ],
-      "prerequisites": [
-        "C08",
-        "C11",
-        "C14",
-        "C22",
-        "C23"
-      ],
-      "credits": 5,
-      "difficulty": 2.4
-    },
-    {
-      "id": "C27",
-      "name": "Course 27 (Databases)",
-      "skills_granted": [
-        "Databases"
-      ],
-      "skills_required": [
-        "Distributed Systems",
-        "Statistics"
-      ],
-      "prerequisites": [
-        "C01",
-        "C13",
-        "C18",
-        "C20"
-      ],
-      "credits": 4,
-      "difficulty": 1.2
-    },
-    {
-      "id": "C28",
-      "name": "Course 28 (Computer Vision, Deep Learning)",
-      "skills_granted": [
-        "Computer Vision",
-        "Deep Learning"
-      ],
-      "skills_required": [
-        "Algorithms",
-        "Distributed Systems"
-      ],
-      "prerequisites": [
-        "C04",
-        "C07",
-        "C14",
-        "C15",
-        "C17"
-      ],
-      "credits": 5,
-      "difficulty": 1.7
-    },
-    {
-      "id": "C29",
-      "name": "Course 29 (Data Engineering)",
+      "name": "Course 26 (Data Engineering)",
       "skills_granted": [
         "Data Engineering"
       ],
-      "skills_required": [],
+      "skills_required": [
+        "Computer Vision",
+        "Deep Learning",
+        "Natural Language Processing",
+        "Software Design"
+      ],
+      "prerequisites": [
+        "C03",
+        "C06",
+        "C08",
+        "C23"
+      ],
+      "credits": 3,
+      "difficulty": 1.4
+    },
+    {
+      "id": "C27",
+      "name": "Course 27 (Communication, Deep Learning)",
+      "skills_granted": [
+        "Communication",
+        "Deep Learning"
+      ],
+      "skills_required": [
+        "Cybersecurity",
+        "Databases",
+        "Python"
+      ],
       "prerequisites": [
         "C04",
-        "C21"
+        "C20",
+        "C25"
       ],
-      "credits": 2,
+      "credits": 5,
       "difficulty": 1.3
     },
     {
-      "id": "C30",
-      "name": "Course 30 (AI Ethics)",
+      "id": "C28",
+      "name": "Course 28 (Machine Learning)",
       "skills_granted": [
-        "AI Ethics"
+        "Machine Learning"
       ],
       "skills_required": [
-        "Databases"
+        "Databases",
+        "Distributed Systems",
+        "Python"
       ],
       "prerequisites": [
-        "C16",
-        "C22",
-        "C26"
+        "C20",
+        "C23",
+        "C25"
+      ],
+      "credits": 5,
+      "difficulty": 4.4
+    },
+    {
+      "id": "C29",
+      "name": "Course 29 (Data Analysis)",
+      "skills_granted": [
+        "Data Analysis"
+      ],
+      "skills_required": [
+        "AI Ethics",
+        "Big Data",
+        "Cloud Computing",
+        "Communication",
+        "DevOps"
+      ],
+      "prerequisites": [
+        "C01",
+        "C02",
+        "C09",
+        "C16"
+      ],
+      "credits": 3,
+      "difficulty": 2.3
+    },
+    {
+      "id": "C30",
+      "name": "Course 30 (Deep Learning)",
+      "skills_granted": [
+        "Deep Learning"
+      ],
+      "skills_required": [
+        "Machine Learning"
+      ],
+      "prerequisites": [
+        "C28"
       ],
       "credits": 4,
-      "difficulty": 1.4
+      "difficulty": 1.9
     }
   ],
   "initial_skills": [
-    "Algorithms",
+    "Cloud Computing",
     "Distributed Systems"
   ],
   "target_skills": [
-    "Algorithms",
-    "Big Data",
+    "Communication",
     "Computer Vision",
-    "Cybersecurity"
+    "Python",
+    "SQL"
   ]
 }

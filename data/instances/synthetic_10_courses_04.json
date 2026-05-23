@@ -121,7 +121,8 @@
       ],
       "skills_required": [
         "Deep Learning",
-        "Machine Learning"
+        "Machine Learning",
+        "Software Design"
       ],
       "prerequisites": [
         "C02",
@@ -154,20 +155,21 @@
         "Machine Learning"
       ],
       "skills_required": [
+        "Algorithms",
         "SQL"
       ],
       "prerequisites": [
         "C03",
         "C08"
       ],
-      "credits": 3,
-      "difficulty": 2.3
+      "credits": 4,
+      "difficulty": 5.0
     }
   ],
   "initial_skills": [],
   "target_skills": [
+    "Algorithms",
     "Machine Learning",
-    "Python",
     "SQL"
   ]
 }

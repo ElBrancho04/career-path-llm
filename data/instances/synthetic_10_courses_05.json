@@ -91,59 +91,65 @@
       "skills_granted": [
         "Statistics"
       ],
-      "skills_required": [],
+      "skills_required": [
+        "Data Engineering",
+        "Deep Learning"
+      ],
       "prerequisites": [
-        "C02"
+        "C02",
+        "C03"
       ],
       "credits": 5,
-      "difficulty": 3.8
+      "difficulty": 2.9
     },
     {
       "id": "C08",
-      "name": "Course 08 (Data Engineering)",
+      "name": "Course 08 (Python)",
       "skills_granted": [
-        "Data Engineering"
-      ],
-      "skills_required": [
-        "Data Analysis"
-      ],
-      "prerequisites": [
-        "C06"
-      ],
-      "credits": 5,
-      "difficulty": 3.3
-    },
-    {
-      "id": "C09",
-      "name": "Course 09 (Data Engineering)",
-      "skills_granted": [
-        "Data Engineering"
+        "Python"
       ],
       "skills_required": [],
       "prerequisites": [],
-      "credits": 4,
-      "difficulty": 4.1
+      "credits": 2,
+      "difficulty": 2.8
+    },
+    {
+      "id": "C09",
+      "name": "Course 09 (Software Design, Statistics)",
+      "skills_granted": [
+        "Software Design",
+        "Statistics"
+      ],
+      "skills_required": [
+        "Cloud Computing",
+        "Data Engineering"
+      ],
+      "prerequisites": [
+        "C03"
+      ],
+      "credits": 2,
+      "difficulty": 2.7
     },
     {
       "id": "C10",
-      "name": "Course 10 (Software Design)",
+      "name": "Course 10 (Data Analysis)",
       "skills_granted": [
-        "Software Design"
+        "Data Analysis"
       ],
       "skills_required": [
-        "Machine Learning"
+        "Software Design"
       ],
       "prerequisites": [
-        "C01"
+        "C09"
       ],
       "credits": 4,
-      "difficulty": 3.7
+      "difficulty": 5.0
     }
   ],
   "initial_skills": [],
   "target_skills": [
-    "Deep Learning",
     "Machine Learning",
+    "Python",
     "SQL",
     "Statistics"
   ]

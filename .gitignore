@@ -7,3 +7,4 @@ results/
 .github/
 data/llm_cache.json
 data/llm_wrapper.log
+*backup*

@@ -125,35 +125,38 @@
         "Statistics"
       ],
       "skills_required": [
+        "Data Analysis",
         "Software Design"
       ],
       "prerequisites": [
         "C01",
         "C04"
       ],
-      "credits": 3,
-      "difficulty": 2.6
+      "credits": 5,
+      "difficulty": 3.7
     },
     {
       "id": "C10",
-      "name": "Course 10 (Data Analysis)",
+      "name": "Course 10 (Algorithms)",
       "skills_granted": [
-        "Data Analysis"
+        "Algorithms"
       ],
       "skills_required": [
-        "Deep Learning"
+        "Deep Learning",
+        "Software Design"
       ],
       "prerequisites": [
+        "C01",
         "C09"
       ],
-      "credits": 3,
-      "difficulty": 3.2
+      "credits": 5,
+      "difficulty": 1.4
     }
   ],
   "initial_skills": [],
   "target_skills": [
+    "Algorithms",
     "Cloud Computing",
-    "Python",
-    "SQL"
+    "Python"
   ]
 }
