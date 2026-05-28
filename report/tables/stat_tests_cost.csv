@@ -1,0 +1,13 @@
+comparison,instance_size,test_name,paired,n_pairs,n_a,n_b,statistic,p_value,p_value_fdr,effect
+A_vs_D,large,wilcoxon,True,45,,,0.0,4.938491288654831e-09,1.9753965154619325e-08,21.0
+A_vs_B,large,wilcoxon,True,45,,,0.0,1.0,1.0,0.0
+A_vs_C,large,wilcoxon,True,45,,,0.0,1.0,1.0,0.0
+A_vs_D,manual,wilcoxon,True,45,,,0.0,0.00010751117672950055,0.0003225335301885017,0.0
+A_vs_B,manual,wilcoxon,True,45,,,0.0,1.0,1.0,0.0
+A_vs_C,manual,wilcoxon,True,45,,,0.0,1.0,1.0,0.0
+A_vs_D,medium,wilcoxon,True,90,,,0.0,4.750398746250337e-14,2.8502392477502023e-13,7.0
+A_vs_B,medium,wilcoxon,True,90,,,0.0,1.0,1.0,0.0
+A_vs_C,medium,wilcoxon,True,90,,,0.0,1.0,1.0,0.0
+A_vs_D,small,wilcoxon,True,140,,,307.5,2.7738784111320534e-19,3.328654093358464e-18,4.5
+A_vs_B,small,wilcoxon,True,140,,,0.0,1.0,1.0,0.0
+A_vs_C,small,wilcoxon,True,140,,,0.0,1.0,1.0,0.0

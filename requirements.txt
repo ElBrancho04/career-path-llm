@@ -3,3 +3,9 @@ numpy
 ortools
 requests
 tqdm
+
+# Dependencias para análisis (notebook report/analysis.ipynb)
+matplotlib
+seaborn
+scipy
+# (opcional) statsmodels
